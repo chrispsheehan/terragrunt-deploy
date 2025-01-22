@@ -1,13 +1,14 @@
 locals {
   aws_region     = get_env("AWS_REGION", "")
   aws_account_id = get_env("AWS_ACCOUNT_ID", "")
-  repo_ref       = get_env("REPO_REF", "")
+  git_repo       = get_env("GIT_REPO", "")
 
   aws_region_valid     = length(local.aws_region) > 0 ? true : error("AWS_REGION must be set as an environment variable.")
   aws_account_id_valid = length(local.aws_account_id) > 0 ? true : error("AWS_ACCOUNT_ID must be set as an environment variable.")
-  repo_ref_valid       = length(local.repo_ref) > 0 ? true : error("REPO_REF must be set as an environment variable.")
+  git_repo_valid       = length(local.git_repo) > 0 ? true : error("GIT_REPO must be set as an environment variable.")
 
   terragrunt_dir    = get_terragrunt_dir()
+  repo_ref          = replace(local.git_repo, "/", "-")
   path_parts        = split("/", local.terragrunt_dir)
   environment       = basename(dirname(local.terragrunt_dir))
   environment_index = index(local.path_parts, local.environment)
@@ -42,4 +43,5 @@ inputs = {
   aws_region   = local.aws_region
   project_name = local.repo_ref
   environment  = local.environment
+  git_repo     = local.git_repo
 }

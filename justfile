@@ -2,7 +2,7 @@ _default:
     just --list
 
 
-get-repo-ref:
+get-git-repo:
     #!/bin/bash
     origin_url=$(git remote get-url origin 2>/dev/null)
 
@@ -20,8 +20,7 @@ get-repo-ref:
         exit 1
     fi
 
-    formatted_repo_name=$(echo "$repo_name" | tr '/' '-')
-    echo "$formatted_repo_name"
+    echo "$repo_name"
 
 
 branch name:
@@ -54,7 +53,7 @@ tg env module op:
     #!/usr/bin/env bash
     export AWS_REGION=eu-west-2
     export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
-    export REPO_REF=$(just get-repo-ref)
+    export GIT_REPO=$(just get-git-repo)
     cd {{justfile_directory()}}/infra/live/{{env}}/{{module}} ; terragrunt {{op}} --terragrunt-debug
 
 
