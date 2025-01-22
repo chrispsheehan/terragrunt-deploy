@@ -53,6 +53,7 @@ validate:
 tg env module op:
     #!/usr/bin/env bash
     export AWS_REGION=eu-west-2
+    export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
     export REPO_REF=$(just get-repo-ref)
     cd {{justfile_directory()}}/infra/live/{{env}}/{{module}} ; terragrunt {{op}} --terragrunt-debug
 
