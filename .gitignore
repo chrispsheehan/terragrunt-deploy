@@ -1,0 +1,8 @@
+.env
+*.terragrunt-cache
+*.terraform
+*.lock.hcl
+*.tfvars.json
+
+# ignore generated files
+infra/live/*.tf
