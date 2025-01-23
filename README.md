@@ -13,7 +13,7 @@ brew install awscli
 
 Initially the aws OIDC role needs to be created with a local script. This allows Github to execute, via terragrunt, defined actions on defined resources.
 
-This is done with `just tg ci aws/oidc plan`
+This is done with `just tg ci aws/oidc apply`
 
 ***WARNING***
 Terragrunt will create the s3 state bucket the first time this is done - this should only happen *ONCE*.
