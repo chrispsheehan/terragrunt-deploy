@@ -14,16 +14,16 @@ locals {
   environment_index = index(local.path_parts, local.environment)
   module_path       = join("/", slice(local.path_parts, local.environment_index, length(local.path_parts)))
 
-  state_bucket   = "${local.aws_account_id}-${local.aws_region}-${local.repo_ref}-tfstate"
-  state_key      = "${local.module_path}/terraform.tfstate"
-  dynamodb_table = "${local.repo_ref}-tf-lockid"
+  state_bucket     = "${local.aws_account_id}-${local.aws_region}-${local.repo_ref}-tfstate"
+  state_key        = "${local.module_path}/terraform.tfstate"
+  state_lock_table = "${local.repo_ref}-tf-lockid"
 }
 
 terraform {
   before_hook "print_locals" {
     commands = ["init", "plan", "apply"]
     execute = [
-      "bash", "-c", "echo STATE:${local.state_bucket}/${local.state_key} TABLE:${local.dynamodb_table}"
+      "bash", "-c", "echo STATE:${local.state_bucket}/${local.state_key} TABLE:${local.state_lock_table}"
     ]
   }
 }
@@ -34,14 +34,18 @@ remote_state {
     bucket         = local.state_bucket
     key            = local.state_key
     region         = local.aws_region
-    dynamodb_table = local.dynamodb_table
+    dynamodb_table = local.state_lock_table
     encrypt        = true
   }
 }
 
 inputs = {
-  aws_region   = local.aws_region
-  project_name = local.repo_ref
-  environment  = local.environment
-  git_repo     = local.git_repo
+  aws_region     = local.aws_region
+  aws_account_id = local.aws_account_id
+  project_name   = local.repo_ref
+  environment    = local.environment
+  git_repo       = local.git_repo
+
+  state_bucket     = local.state_bucket
+  state_lock_table = local.state_lock_table
 }
