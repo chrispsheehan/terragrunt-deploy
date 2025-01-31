@@ -2,6 +2,7 @@ locals {
   aws_region     = get_env("AWS_REGION", "")
   aws_account_id = get_env("AWS_ACCOUNT_ID", "")
   git_repo       = get_env("GIT_REPO", "")
+  git_token      = get_env("GITHUB_TOKEN", "")
 
   aws_region_valid     = length(local.aws_region) > 0 ? true : error("AWS_REGION must be set as an environment variable.")
   aws_account_id_valid = length(local.aws_account_id) > 0 ? true : error("AWS_ACCOUNT_ID must be set as an environment variable.")
@@ -45,6 +46,7 @@ inputs = {
   project_name   = local.repo_ref
   environment    = local.environment
   git_repo       = local.git_repo
+  git_token      = local.git_token
 
   state_bucket     = local.state_bucket
   state_lock_table = local.state_lock_table
