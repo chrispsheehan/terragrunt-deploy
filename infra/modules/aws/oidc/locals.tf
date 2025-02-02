@@ -1,5 +1,11 @@
 locals {
   repo_subjects = [for ref in var.repo_refs : format("repo:%s:ref:%s", var.git_repo, ref)]
+  allowed_entities = concat(
+    [
+      "repo:${var.git_repo}:environment:${var.environment}"
+    ],
+    local.repo_subjects
+  )
   oidc_domain   = "token.actions.githubusercontent.com"
   oidc_actions = [
     "sts:AssumeRoleWithWebIdentity",

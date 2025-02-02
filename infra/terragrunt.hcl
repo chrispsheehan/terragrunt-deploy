@@ -4,14 +4,13 @@ locals {
   git_repo       = get_env("GIT_REPO", "")
   git_token      = get_env("GITHUB_TOKEN", "")
 
-  deploy_role_name = "github-oidc-deploy-role"
-
+  repo_ref             = replace(local.git_repo, "/", "-")
+  deploy_role_name     = "${local.repo_ref}-github-oidc-role"
   aws_region_valid     = length(local.aws_region) > 0 ? true : error("AWS_REGION must be set as an environment variable.")
   aws_account_id_valid = length(local.aws_account_id) > 0 ? true : error("AWS_ACCOUNT_ID must be set as an environment variable.")
   git_repo_valid       = length(local.git_repo) > 0 ? true : error("GIT_REPO must be set as an environment variable.")
 
   terragrunt_dir    = get_terragrunt_dir()
-  repo_ref          = replace(local.git_repo, "/", "-")
   path_parts        = split("/", local.terragrunt_dir)
   module_name       = basename(dirname(local.terragrunt_dir))
   environment_index = index(local.path_parts, local.module_name)

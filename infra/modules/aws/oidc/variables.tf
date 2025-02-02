@@ -23,6 +23,10 @@ variable "repo_refs" {
   description = "The target repo refs for OIDC access i.e heads/main or tags/*"
 }
 
+variable "environment" {
+  type = string
+}
+
 variable "actions" {
   type        = list(string)
   description = "The action(s) to be allowed i.e. [dynamodb:*]"
