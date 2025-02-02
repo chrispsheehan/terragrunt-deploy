@@ -9,3 +9,9 @@ variable "git_repo" {
 variable "environment" {
   type = string
 }
+
+variable "variables" {
+  description = "Map of environment variables for the GitHub Actions environment"
+  type        = map(string)
+  default     = {}
+}

@@ -8,3 +8,12 @@ resource "github_repository_environment" "this" {
     custom_branch_policies = false
   }
 }
+
+resource "github_actions_environment_variable" "this" {
+  for_each = var.variables
+
+  repository    = data.github_repository.this.full_name
+  environment   = github_repository_environment.this.environment
+  variable_name = each.key
+  value         = each.value
+}
