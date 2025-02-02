@@ -4,6 +4,8 @@ locals {
   git_repo       = get_env("GIT_REPO", "")
   git_token      = get_env("GITHUB_TOKEN", "")
 
+  deploy_role_name = "github-oidc-deploy-role"
+
   aws_region_valid     = length(local.aws_region) > 0 ? true : error("AWS_REGION must be set as an environment variable.")
   aws_account_id_valid = length(local.aws_account_id) > 0 ? true : error("AWS_ACCOUNT_ID must be set as an environment variable.")
   git_repo_valid       = length(local.git_repo) > 0 ? true : error("GIT_REPO must be set as an environment variable.")
@@ -11,9 +13,10 @@ locals {
   terragrunt_dir    = get_terragrunt_dir()
   repo_ref          = replace(local.git_repo, "/", "-")
   path_parts        = split("/", local.terragrunt_dir)
-  environment       = basename(dirname(local.terragrunt_dir))
-  environment_index = index(local.path_parts, local.environment)
+  module_name       = basename(dirname(local.terragrunt_dir))
+  environment_index = index(local.path_parts, local.module_name)
   module_path       = join("/", slice(local.path_parts, local.environment_index, length(local.path_parts)))
+  environment       = local.path_parts[length(local.path_parts) - 3]
 
   state_bucket     = "${local.aws_account_id}-${local.aws_region}-${local.repo_ref}-tfstate"
   state_key        = "${local.module_path}/terraform.tfstate"
@@ -41,12 +44,13 @@ remote_state {
 }
 
 inputs = {
-  aws_region     = local.aws_region
-  aws_account_id = local.aws_account_id
-  project_name   = local.repo_ref
-  environment    = local.environment
-  git_repo       = local.git_repo
-  git_token      = local.git_token
+  aws_region       = local.aws_region
+  aws_account_id   = local.aws_account_id
+  project_name     = local.repo_ref
+  environment      = local.environment
+  git_repo         = local.git_repo
+  git_token        = local.git_token
+  deploy_role_name = local.deploy_role_name
 
   state_bucket     = local.state_bucket
   state_lock_table = local.state_lock_table

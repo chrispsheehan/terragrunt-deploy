@@ -28,7 +28,7 @@ variable "actions" {
   description = "The action(s) to be allowed i.e. [dynamodb:*]"
 }
 
-variable "role_name" {
+variable "deploy_role_name" {
   type        = string
   description = "The role to use by OIDC"
 }
