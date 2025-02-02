@@ -57,15 +57,6 @@ tg env module op:
     cd {{justfile_directory()}}/infra/live/{{env}}/{{module}} ; terragrunt {{op}} --terragrunt-debug
 
 
-ci-tg-apply module op:
-    #!/usr/bin/env bash
-    set -euo pipefail
-
-    just tg {{module}} init
-    just tg {{module}} 'run-all validate -no-color'
-    just tg {{module}} '{{op}} -auto-approve -input=false -no-color'
-
-
 PROJECT_DIR := justfile_directory()
 
 clean-terragrunt-cache:
