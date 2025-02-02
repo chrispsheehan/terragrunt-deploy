@@ -16,8 +16,8 @@ jobs:
 
       - uses: ./.github/actions/terragrunt_action
         with:
-          aws_oidc_role_arn: ${{ env.AWS_OIDC_ROLE_ARN }}
-          aws_region: ${{ env.AWS_REGION }}
+          aws_oidc_role_arn: ${{ vars.AWS_OIDC_ROLE_ARN }}
+          aws_region: ${{ vars.AWS_REGION }}
           tg_environment: ci
           tg_module: aws/oidc
           action: 'apply --auto-approve'
