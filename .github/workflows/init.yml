@@ -5,6 +5,10 @@ on:
     branches:
       - github-actions-init
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   dev:
     environment:
