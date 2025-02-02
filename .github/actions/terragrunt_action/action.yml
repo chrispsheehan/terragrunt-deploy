@@ -58,6 +58,10 @@ runs:
       shell: bash
       run: echo "AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)" >> $GITHUB_ENV
 
+    - name: Set git repo name
+      shell: bash
+      run: echo "GIT_REPO=${{ github.repository }}" >> $GITHUB_ENV
+
     - name: Action Terragrunt
       shell: bash
       working-directory: infra/live/${{ inputs.tg_environment }}/${{ inputs.tg_module }}
