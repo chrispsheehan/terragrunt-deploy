@@ -56,7 +56,7 @@ runs:
 
     - name: Set AWS account ID
       shell: bash
-      run: export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
+      run: echo "AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)" >> $GITHUB_ENV
 
     - name: Action Terragrunt
       shell: bash
