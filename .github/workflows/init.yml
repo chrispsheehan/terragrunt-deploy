@@ -24,4 +24,4 @@ jobs:
           aws_region: ${{ vars.AWS_REGION }}
           tg_environment: ci
           tg_module: aws/oidc
-          action: 'apply --auto-approve'
+          tg_action: 'apply --auto-approve'
