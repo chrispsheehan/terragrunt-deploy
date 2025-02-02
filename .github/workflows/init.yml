@@ -1,0 +1,23 @@
+name: Push on main
+
+on:
+  push:
+    branches:
+      - github-actions-init
+
+jobs:
+  dev:
+    environment:
+        name: ci
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/terragrunt_action
+        with:
+          aws_oidc_role_arn: ${{ env.AWS_OIDC_ROLE_ARN }}
+          aws_region: ${{ env.AWS_REGION }}
+          tg_environment: ci
+          tg_module: aws/oidc
+          action: 'apply --auto-approve'

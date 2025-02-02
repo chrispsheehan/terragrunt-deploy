@@ -1,0 +1,67 @@
+name: "Execute Terraform & Terragrunt with AWS OIDC"
+description: "Sets up Just, Terraform, Terragrunt, and configures AWS OIDC authentication"
+inputs:
+  just_version:
+    description: "Version of Just to install"
+    required: false
+    default: "1.0.0"
+  tf_version:
+    description: "Version of Terraform to install"
+    required: false
+    default: "1.5.7"
+  tg_version:
+    description: "Version of Terragrunt to install"
+    required: false
+    default: "0.51.5"
+  aws_oidc_role_arn:
+    description: "AWS OIDC Role to assume"
+    required: true
+  aws_region:
+    description: "AWS Region"
+    required: true
+  tg_environment:
+    description: "Environment to preform action upon"
+    required: true
+  tg_module:
+    description: "Module to preform action upon"
+    required: true
+  tg_action:
+    description: "Terragrunt action to perform (`apply`, `plan`, or `destroy`)"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install Just
+      uses: extractions/setup-just@v2
+      with:
+        just-version: ${{ inputs.just_version }}
+
+    - name: Install Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: ${{ inputs.tf_version }}
+        terraform_wrapper: false
+
+    - name: Install Terragrunt
+      uses: autero1/action-terragrunt@v1.3.2
+      with:
+        terragrunt_version: ${{ inputs.tg_version }}
+
+    - name: Configure AWS OIDC Authentication
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ inputs.aws_oidc_role_arn }}
+        aws-region: ${{ inputs.aws_region }}
+
+    - name: Output AWS User
+      shell: bash
+      run: aws sts get-caller-identity
+
+    - name: Init Terragrunt
+      shell: bash
+      run: just tg ${{ inputs.tg_environment }} ${{ inputs.tg_module }} init
+
+    - name: Action Terragrunt
+      shell: bash
+      run: just tg ${{ inputs.tg_environment }} ${{ inputs.tg_module }} ${{ inputs.tg_action }}

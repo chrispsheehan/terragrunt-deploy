@@ -1,6 +1,6 @@
 resource "github_repository_environment" "this" {
   environment         = var.environment
-  repository          = data.github_repository.this.full_name
+  repository          = data.github_repository.this.name
   prevent_self_review = true
 
   deployment_branch_policy {
@@ -12,7 +12,7 @@ resource "github_repository_environment" "this" {
 resource "github_actions_environment_variable" "this" {
   for_each = var.variables
 
-  repository    = data.github_repository.this.full_name
+  repository    = data.github_repository.this.name
   environment   = github_repository_environment.this.environment
   variable_name = each.key
   value         = each.value
