@@ -54,9 +54,9 @@ runs:
         role-to-assume: ${{ inputs.aws_oidc_role_arn }}
         aws-region: ${{ inputs.aws_region }}
 
-    - name: Output AWS User
+    - name: Set AWS account ID
       shell: bash
-      run: aws sts get-caller-identity
+      run: export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
 
     - name: Action Terragrunt
       shell: bash
