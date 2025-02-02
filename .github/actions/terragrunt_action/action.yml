@@ -60,4 +60,7 @@ runs:
 
     - name: Action Terragrunt
       shell: bash
-      run: just ci-tg-apply ${{ inputs.tg_environment }} ${{ inputs.tg_module }} ${{ inputs.tg_action }}
+      working-directory: infra/live/${{ inputs.tg_environment }}/${{ inputs.tg_module }}
+      run: |
+        terragrunt init
+        # terragrunt ${{ inputs.tg_action }} -auto-approve
