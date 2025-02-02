@@ -43,6 +43,12 @@ data "aws_dynamodb_table" "tf_lock_table" {
 }
 
 data "aws_iam_policy_document" "terraform_state" {
+  statement {
+    actions = local.oidc_actions
+    resources = [
+      "*"
+    ]
+  }
 
   statement {
     actions = local.iam_actions

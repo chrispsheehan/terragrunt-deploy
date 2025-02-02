@@ -1,6 +1,6 @@
 locals {
   repo_subjects = [for ref in var.repo_refs : format("repo:%s:ref:%s", var.git_repo, ref)]
-  oidc_domain = "token.actions.githubusercontent.com"
+  oidc_domain   = "token.actions.githubusercontent.com"
   oidc_actions = [
     "sts:AssumeRoleWithWebIdentity",
     "sts:TagSession"
