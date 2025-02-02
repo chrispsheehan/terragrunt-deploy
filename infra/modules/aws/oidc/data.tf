@@ -29,7 +29,7 @@ data "aws_iam_policy_document" "github_actions" {
       test     = "StringLike"
       variable = "${local.oidc_domain}:sub"
 
-      values = var.repo_refs
+      values = local.repo_subjects
     }
   }
 }

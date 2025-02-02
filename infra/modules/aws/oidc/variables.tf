@@ -33,6 +33,11 @@ variable "deploy_role_name" {
   description = "The role to use by OIDC"
 }
 
+variable "git_repo" {
+  type        = string
+  description = "The target repo for OIDC access i.e octo-org/octo-repo"
+}
+
 variable "resources" {
   type        = list(string)
   description = "The resource(s) to be allowed"
