@@ -1,6 +1,7 @@
 locals {
   repo_refs = [
     "heads/main",
+    "heads/github-actions-init",
     "tags/*"
   ]
 

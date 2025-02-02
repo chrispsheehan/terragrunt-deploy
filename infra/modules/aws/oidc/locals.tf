@@ -6,7 +6,7 @@ locals {
     ],
     local.repo_subjects
   )
-  oidc_domain   = "token.actions.githubusercontent.com"
+  oidc_domain = "token.actions.githubusercontent.com"
   oidc_actions = [
     "sts:AssumeRoleWithWebIdentity",
     "sts:TagSession"
