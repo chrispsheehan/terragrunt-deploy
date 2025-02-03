@@ -42,6 +42,11 @@ runs:
           echo "✅ GITHUB_TOKEN is available"
         fi
 
+    - name: test
+      shell: bash
+      run: |
+        curl -s -o /dev/null -w %{http_code} -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/${{ github.repository }}"
+
     - name: Install Just
       uses: extractions/setup-just@v2
       with:
