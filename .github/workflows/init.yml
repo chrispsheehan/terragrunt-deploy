@@ -11,26 +11,26 @@ permissions:
   contents: read
 
 jobs:
-  ci-oidc:
-    environment:
-        name: ci
+  # ci-oidc:
+  #   environment:
+  #       name: ci
 
-    runs-on: ubuntu-latest
-    env:
-      ENVIRONMENT_NAME: ci
-    steps:
-      - uses: actions/checkout@v4
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     ENVIRONMENT_NAME: ci
+  #   steps:
+  #     - uses: actions/checkout@v4
 
-      - uses: ./.github/actions/terragrunt_action
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          aws_oidc_role_arn: ${{ vars.AWS_OIDC_ROLE_ARN }}
-          aws_region: ${{ vars.AWS_REGION }}
-          tg_directory: infra/live/${{env.ENVIRONMENT_NAME}}/aws/oidc
-          tg_action: apply
+  #     - uses: ./.github/actions/terragrunt_action
+  #       with:
+  #         github_token: ${{ secrets.GITHUB_TOKEN }}
+  #         aws_oidc_role_arn: ${{ vars.AWS_OIDC_ROLE_ARN }}
+  #         aws_region: ${{ vars.AWS_REGION }}
+  #         tg_directory: infra/live/${{env.ENVIRONMENT_NAME}}/aws/oidc
+  #         tg_action: apply
 
   dev-github:
-    needs: ci-oidc
+    # needs: ci-oidc
 
     environment:
         name: ci
@@ -38,13 +38,20 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ENVIRONMENT_NAME: dev
+      GITHUB_TOKEN: ${{ secrets.github_token }}
     steps:
       - uses: actions/checkout@v4
 
-      - uses: ./.github/actions/terragrunt_action
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          aws_oidc_role_arn: ${{ vars.AWS_OIDC_ROLE_ARN }}
-          aws_region: ${{ vars.AWS_REGION }}
-          tg_directory: infra/live/${{env.ENVIRONMENT_NAME}}/github/environment
-          tg_action: apply
+      - name: test
+        shell: bash
+        run: |
+          curl -s -o /dev/null -w %{http_code} -H "Authorization: token ${{ env.GITHUB_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}"
+
+
+      # - uses: ./.github/actions/terragrunt_action
+      #   with:
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     aws_oidc_role_arn: ${{ vars.AWS_OIDC_ROLE_ARN }}
+      #     aws_region: ${{ vars.AWS_REGION }}
+      #     tg_directory: infra/live/${{env.ENVIRONMENT_NAME}}/github/environment
+      #     tg_action: apply
