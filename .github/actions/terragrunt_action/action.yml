@@ -32,6 +32,16 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Verify GitHub Token Availability
+      shell: bash
+      run: |
+        if [[ -z "$GITHUB_TOKEN" ]]; then
+          echo "❌ ERROR: GITHUB_TOKEN is missing!"
+          exit 1
+        else
+          echo "✅ GITHUB_TOKEN is available"
+        fi
+
     - name: Install Just
       uses: extractions/setup-just@v2
       with:

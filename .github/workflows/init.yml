@@ -42,16 +42,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: test
-        shell: bash
-        run: |
-          curl -s -o /dev/null -w %{http_code} -H "Authorization: token ${{ env.GITHUB_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}"
+      # - name: test
+      #   shell: bash
+      #   run: |
+      #     curl -s -o /dev/null -w %{http_code} -H "Authorization: token ${{ env.GITHUB_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}"
 
 
-      # - uses: ./.github/actions/terragrunt_action
-      #   with:
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
-      #     aws_oidc_role_arn: ${{ vars.AWS_OIDC_ROLE_ARN }}
-      #     aws_region: ${{ vars.AWS_REGION }}
-      #     tg_directory: infra/live/${{env.ENVIRONMENT_NAME}}/github/environment
-      #     tg_action: apply
+      - uses: ./.github/actions/terragrunt_action
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          aws_oidc_role_arn: ${{ vars.AWS_OIDC_ROLE_ARN }}
+          aws_region: ${{ vars.AWS_REGION }}
+          tg_directory: infra/live/${{env.ENVIRONMENT_NAME}}/github/environment
+          tg_action: apply
