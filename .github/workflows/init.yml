@@ -22,6 +22,5 @@ jobs:
         with:
           aws_oidc_role_arn: ${{ vars.AWS_OIDC_ROLE_ARN }}
           aws_region: ${{ vars.AWS_REGION }}
-          tg_environment: ci
-          tg_module: aws/oidc
+          tg_directory: infra/live/ci/aws/oidc
           tg_action: apply

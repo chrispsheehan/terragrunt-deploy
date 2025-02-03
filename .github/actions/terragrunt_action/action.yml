@@ -19,11 +19,8 @@ inputs:
   aws_region:
     description: "AWS Region"
     required: true
-  tg_environment:
-    description: "Environment to preform action upon"
-    required: true
-  tg_module:
-    description: "Module to preform action upon"
+  tg_directory:
+    description: "Module directory to preform action upon"
     required: true
   tg_action:
     description: "Terragrunt action to perform (`apply`, `plan`, or `destroy`)"
@@ -64,7 +61,7 @@ runs:
 
     - name: Action Terragrunt
       shell: bash
-      working-directory: infra/live/${{ inputs.tg_environment }}/${{ inputs.tg_module }}
+      working-directory: ${{ inputs.tg_directory }}
       run: |
         terragrunt init
         # terragrunt ${{ inputs.tg_action }} -auto-approve
