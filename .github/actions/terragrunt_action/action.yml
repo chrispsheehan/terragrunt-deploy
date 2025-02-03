@@ -13,6 +13,9 @@ inputs:
     description: "Version of Terragrunt to install"
     required: false
     default: "0.51.5"
+  github_token:
+    description: "Github Token for API authentication"
+    required: false
   aws_oidc_role_arn:
     description: "AWS OIDC Role to assume"
     required: true

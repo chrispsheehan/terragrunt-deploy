@@ -27,6 +27,7 @@ jobs:
 
       - uses: ./.github/actions/terragrunt_action
         with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           aws_oidc_role_arn: ${{ vars.AWS_OIDC_ROLE_ARN }}
           aws_region: ${{ vars.AWS_REGION }}
           tg_directory: infra/live/${{env.ENVIRONMENT_NAME}}/aws/oidc
@@ -46,6 +47,7 @@ jobs:
 
       - uses: ./.github/actions/terragrunt_action
         with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           aws_oidc_role_arn: ${{ vars.AWS_OIDC_ROLE_ARN }}
           aws_region: ${{ vars.AWS_REGION }}
           tg_directory: infra/live/${{env.ENVIRONMENT_NAME}}/github/environment
