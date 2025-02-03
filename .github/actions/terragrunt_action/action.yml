@@ -23,7 +23,7 @@ inputs:
     description: "Module directory to preform action upon"
     required: true
   tg_action:
-    description: "Terragrunt action to perform (`apply`, `plan`, or `destroy`)"
+    description: "Terragrunt action to perform (`apply` or `destroy`)"
     required: true
 
 runs:
@@ -74,6 +74,11 @@ runs:
           ${{ inputs.tg_directory }}/.terragrunt-cache
         key: ${{ steps.cache-key.outputs.key }}
         restore-keys: terraform-${{ runner.os }}-
+
+    - name: Debug Cache Hit Output
+      shell: bash
+      run: |
+        echo "Cache Hit: ${{ steps.cache-restore.outputs.cache-hit }}"
 
     - name: Init Terragrunt
       shell: bash
