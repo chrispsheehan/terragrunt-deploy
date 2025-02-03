@@ -59,6 +59,10 @@ runs:
       shell: bash
       run: echo "GIT_REPO=${{ github.repository }}" >> $GITHUB_ENV
 
+    - name: Ensure Terraform Can Access GitHub
+      shell: bash
+      run: echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
+
     - name: Init Terragrunt
       shell: bash
       working-directory: ${{ inputs.tg_directory }}
