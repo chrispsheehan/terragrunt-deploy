@@ -59,10 +59,32 @@ runs:
       shell: bash
       run: echo "GIT_REPO=${{ github.repository }}" >> $GITHUB_ENV
 
+    - name: Restore Terraform Cache
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.terraform.d/plugin-cache
+          ${{ inputs.tg_directory }}/.terraform
+          ${{ inputs.tg_directory }}/.terragrunt-cache
+        key: terraform-${{ runner.os }}-${{ inputs.tg_directory }}
+        restore-keys: terraform-${{ runner.os }}-
+
     - name: Init Terragrunt
       shell: bash
       working-directory: ${{ inputs.tg_directory }}
-      run: terragrunt init
+      run: |
+        mkdir -p ~/.terraform.d/plugin-cache
+        export TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache"
+        terragrunt init
+
+    - name: Save Terraform Cache
+      uses: actions/cache/save@v3
+      with:
+        path: |
+          ~/.terraform.d/plugin-cache
+          ${{ inputs.tg_directory }}/.terraform
+          ${{ inputs.tg_directory }}/.terragrunt-cache
+        key: terraform-${{ runner.os }}-${{ inputs.tg_directory }}
 
     - name: Action Terragrunt
       shell: bash
