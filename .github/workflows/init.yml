@@ -6,6 +6,10 @@ on:
     branches:
       - github-actions-init
 
+env:
+  TF_LOG: DEBUG
+
+
 permissions:
   id-token: write
   contents: read
@@ -37,7 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ENVIRONMENT_NAME: dev
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GH_PAT }}
     steps:
       - uses: actions/checkout@v4
 
