@@ -13,9 +13,6 @@ inputs:
     description: "Version of Terragrunt to install"
     required: false
     default: "0.51.5"
-  github_token:
-    description: "Github Token for API authentication"
-    required: false
   aws_oidc_role_arn:
     description: "AWS OIDC Role to assume"
     required: true
@@ -32,21 +29,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Verify GitHub Token Availability
-      shell: bash
-      run: |
-        if [[ -z "$GITHUB_TOKEN" ]]; then
-          echo "❌ ERROR: GITHUB_TOKEN is missing!"
-          exit 1
-        else
-          echo "✅ GITHUB_TOKEN is available"
-        fi
-
-    - name: test
-      shell: bash
-      run: |
-        curl -s -o /dev/null -w %{http_code} -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/${{ github.repository }}"
-
     - name: Install Just
       uses: extractions/setup-just@v2
       with:
@@ -76,10 +58,6 @@ runs:
     - name: Set git repo name
       shell: bash
       run: echo "GIT_REPO=${{ github.repository }}" >> $GITHUB_ENV
-
-    # - name: Ensure Terraform Can Access GitHub
-    #   shell: bash
-    #   run: echo "GITHUB_TOKEN=${{ inputs.github_token }}" >> $GITHUB_ENV
 
     - name: Init Terragrunt
       shell: bash
