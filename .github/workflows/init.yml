@@ -6,10 +6,6 @@ on:
     branches:
       - github-actions-init
 
-env:
-  TF_LOG: DEBUG
-
-
 permissions:
   id-token: write
   contents: read
