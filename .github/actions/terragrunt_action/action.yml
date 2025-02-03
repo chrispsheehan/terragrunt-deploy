@@ -59,14 +59,20 @@ runs:
       shell: bash
       run: echo "GIT_REPO=${{ github.repository }}" >> $GITHUB_ENV
 
+    - name: Determine Cache Key
+      id: cache-key
+      shell: bash
+      run: |
+        FILES_HASH=$(find . -type f \( -name "*.hcl" -o -name "*.tf" \) -exec sha256sum {} + | sha256sum | awk '{ print $1 }')
+        echo "key=terraform-${{ runner.os }}-${{ inputs.tg_directory }}-${FILES_HASH}" >> $GITHUB_OUTPUT
+
     - name: Restore Terraform Cache
       uses: actions/cache@v3
       with:
         path: |
           ~/.terraform.d/plugin-cache
-          ${{ inputs.tg_directory }}/.terraform
           ${{ inputs.tg_directory }}/.terragrunt-cache
-        key: terraform-${{ runner.os }}-${{ inputs.tg_directory }}
+        key: ${{ steps.cache-key.outputs.key }}
         restore-keys: terraform-${{ runner.os }}-
 
     - name: Init Terragrunt
@@ -77,14 +83,14 @@ runs:
         export TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache"
         terragrunt init
 
-    - name: Save Terraform Cache
+    - name: Save Terraform Cache if invalidated
+      if: steps.cache-restore.outputs.cache-hit != 'true'
       uses: actions/cache/save@v3
       with:
         path: |
           ~/.terraform.d/plugin-cache
-          ${{ inputs.tg_directory }}/.terraform
           ${{ inputs.tg_directory }}/.terragrunt-cache
-        key: terraform-${{ runner.os }}-${{ inputs.tg_directory }}
+        key: ${{ steps.cache-key.outputs.key }}
 
     - name: Action Terragrunt
       shell: bash
