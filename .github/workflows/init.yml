@@ -37,6 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ENVIRONMENT_NAME: dev
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
 
