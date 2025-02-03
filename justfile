@@ -54,6 +54,7 @@ tg env module op:
     export AWS_REGION=eu-west-2
     export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
     export GIT_REPO=$(just get-git-repo)
+    cd {{justfile_directory()}}/infra/live/{{env}}/{{module}} ; terragrunt init --terragrunt-debug
     cd {{justfile_directory()}}/infra/live/{{env}}/{{module}} ; terragrunt {{op}} --terragrunt-debug
 
 
@@ -74,7 +75,5 @@ init:
     fi
     GITHUB_TOKEN=$(gh auth token 2>/dev/null)
     export GITHUB_TOKEN
-    just tg ci aws/oidc init
     just tg ci aws/oidc apply
-    just tg ci github/environment init
     just tg ci github/environment apply

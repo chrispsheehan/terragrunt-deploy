@@ -9,13 +9,12 @@ locals {
 
   terragrunt_dir    = get_terragrunt_dir()
   path_parts        = split("/", local.terragrunt_dir)
-  module_name       = basename(dirname(local.terragrunt_dir))
-  environment_index = index(local.path_parts, local.module_name)
+  environment_index = index(local.path_parts, (basename(dirname(local.terragrunt_dir))))
   module_path       = join("/", slice(local.path_parts, local.environment_index, length(local.path_parts)))
   environment       = local.path_parts[length(local.path_parts) - 3]
 
   state_bucket     = "${local.aws_account_id}-${local.aws_region}-${local.repo_ref}-tfstate"
-  state_key        = "${local.module_path}/terraform.tfstate"
+  state_key        = "${local.environment}/${local.module_path}/terraform.tfstate"
   state_lock_table = "${local.repo_ref}-tf-lockid"
 }
 
