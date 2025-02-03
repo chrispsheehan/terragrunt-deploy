@@ -1,4 +1,5 @@
-name: Push on main
+name: Init
+description: Run ci OIDC and github environment terragrunt module apply
 
 on:
   push:
@@ -10,11 +11,13 @@ permissions:
   contents: read
 
 jobs:
-  dev:
+  ci-oidc:
     environment:
         name: ci
 
     runs-on: ubuntu-latest
+    env:
+      ENVIRONMENT_NAME: ci
     steps:
       - uses: actions/checkout@v4
 
@@ -22,5 +25,24 @@ jobs:
         with:
           aws_oidc_role_arn: ${{ vars.AWS_OIDC_ROLE_ARN }}
           aws_region: ${{ vars.AWS_REGION }}
-          tg_directory: infra/live/ci/aws/oidc
+          tg_directory: infra/live/${{env.ENVIRONMENT_NAME}}/aws/oidc
+          tg_action: apply
+
+  dev-github:
+    needs: ci-oidc
+
+    environment:
+        name: ci
+
+    runs-on: ubuntu-latest
+    env:
+      ENVIRONMENT_NAME: dev
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/terragrunt_action
+        with:
+          aws_oidc_role_arn: ${{ vars.AWS_OIDC_ROLE_ARN }}
+          aws_region: ${{ vars.AWS_REGION }}
+          tg_directory: infra/live/${{env.ENVIRONMENT_NAME}}/github/environment
           tg_action: apply
