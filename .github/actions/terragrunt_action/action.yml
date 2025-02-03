@@ -89,7 +89,7 @@ runs:
         terragrunt init
 
     - name: Save Terraform Cache if invalidated
-      if: steps.cache-restore.outputs.cache-hit != 'true'
+      if: ${{ steps.cache-restore.outputs.cache-hit != 'true' }}
       uses: actions/cache/save@v3
       with:
         path: |
