@@ -17,14 +17,9 @@ locals {
 
   repo_ref         = replace(local.git_repo, "/", "-")
   deploy_role_name = "${local.repo_ref}-github-oidc-role"
-
-
-
   state_bucket     = "${local.aws_account_id}-${local.aws_region}-${local.repo_ref}-tfstate"
   state_key        = "${local.environment}/${local.module_path}/terraform.tfstate"
   state_lock_table = "${local.repo_ref}-tf-lockid"
-
-
 }
 
 terraform {
