@@ -34,5 +34,5 @@ jobs:
         with:
           aws_oidc_role_arn: ${{ vars.AWS_OIDC_ROLE_ARN }}
           aws_region: ${{ vars.AWS_REGION }}
-          tg_directory: infra/live/$${{inputs.environment}}/aws/bucket
+          tg_directory: infra/live/${{inputs.environment}}/aws/bucket
           tg_action: apply
