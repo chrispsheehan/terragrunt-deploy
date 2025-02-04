@@ -1,5 +1,16 @@
 locals {
-  aws_region     = get_env("AWS_REGION", "")
+  terragrunt_dir    = get_terragrunt_dir()
+  path_parts        = split("/", local.terragrunt_dir)
+  environment_index = index(local.path_parts, (basename(dirname(local.terragrunt_dir))))
+  module_path       = join("/", slice(local.path_parts, local.environment_index, length(local.path_parts)))
+  environment       = local.path_parts[length(local.path_parts) - 3]
+  base_name         = local.path_parts[length(local.path_parts) - 4]
+
+  global_vars_file = "${dirname(find_in_parent_folders())}/${local.base_name}/terragrunt.tfvars.json"
+  env_vars_file    = "${dirname(find_in_parent_folders())}/${local.base_name}/${local.environment}/terragrunt.tfvars.json"
+  env_vars_global  = jsondecode(file(local.global_vars_file))
+
+  aws_region     = lookup(local.env_vars_global, "aws_region", "eu-west-2")
   aws_account_id = get_env("AWS_ACCOUNT_ID", "")
   git_repo       = get_env("GIT_REPO", "")
   git_token      = get_env("GITHUB_TOKEN", "")
@@ -7,19 +18,13 @@ locals {
   repo_ref         = replace(local.git_repo, "/", "-")
   deploy_role_name = "${local.repo_ref}-github-oidc-role"
 
-  terragrunt_dir    = get_terragrunt_dir()
-  path_parts        = split("/", local.terragrunt_dir)
-  environment_index = index(local.path_parts, (basename(dirname(local.terragrunt_dir))))
-  module_path       = join("/", slice(local.path_parts, local.environment_index, length(local.path_parts)))
-  environment       = local.path_parts[length(local.path_parts) - 3]
-  base_name          = local.path_parts[length(local.path_parts) - 4]
+
 
   state_bucket     = "${local.aws_account_id}-${local.aws_region}-${local.repo_ref}-tfstate"
   state_key        = "${local.environment}/${local.module_path}/terraform.tfstate"
   state_lock_table = "${local.repo_ref}-tf-lockid"
 
-  global_vars_file = "${dirname(find_in_parent_folders())}/${local.base_name}/terragrunt.tfvars.json"
-  env_vars_file = "${dirname(find_in_parent_folders())}/${local.base_name}/${local.environment}/terragrunt.tfvars.json"
+
 }
 
 terraform {
@@ -51,7 +56,6 @@ remote_state {
 }
 
 inputs = {
-  aws_region       = local.aws_region
   aws_account_id   = local.aws_account_id
   project_name     = local.repo_ref
   environment      = local.environment

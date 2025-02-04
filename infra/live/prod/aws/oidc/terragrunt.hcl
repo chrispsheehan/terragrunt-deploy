@@ -16,6 +16,6 @@ terraform {
 }
 
 inputs = {
-  repo_refs        = local.repo_refs
-  resources        = local.resources
+  repo_refs = local.repo_refs
+  resources = local.resources
 }
