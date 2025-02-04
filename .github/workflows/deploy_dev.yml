@@ -1,0 +1,11 @@
+name: Deploy Dev
+description: Deploy the Dev resources using the dev github environment
+
+on:
+  workflow_dispatch:
+
+jobs:
+  prod:
+    uses: ./.github/workflows/deploy.yml
+    with:
+      environment: prod
