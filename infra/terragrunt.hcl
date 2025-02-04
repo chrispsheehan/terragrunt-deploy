@@ -16,6 +16,10 @@ locals {
   state_bucket     = "${local.aws_account_id}-${local.aws_region}-${local.repo_ref}-tfstate"
   state_key        = "${local.environment}/${local.module_path}/terraform.tfstate"
   state_lock_table = "${local.repo_ref}-tf-lockid"
+
+  oidc_role_actions = [
+    "s3:*"
+  ]
 }
 
 terraform {
@@ -49,4 +53,6 @@ inputs = {
 
   state_bucket     = local.state_bucket
   state_lock_table = local.state_lock_table
+
+  oidc_role_actions = local.oidc_role_actions
 }

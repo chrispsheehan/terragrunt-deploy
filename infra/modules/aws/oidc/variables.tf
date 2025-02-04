@@ -27,7 +27,7 @@ variable "environment" {
   type = string
 }
 
-variable "actions" {
+variable "oidc_role_actions" {
   type        = list(string)
   description = "The action(s) to be allowed i.e. [dynamodb:*]"
 }
