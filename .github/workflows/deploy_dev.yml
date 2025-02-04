@@ -7,6 +7,10 @@ on:
     branches:
       - github-actions-init
 
+permissions:
+    id-token: write
+    contents: read
+
 jobs:
   prod:
     uses: ./.github/workflows/deploy.yml
