@@ -1,4 +1,8 @@
 locals {
+  aws_account_id = get_env("AWS_ACCOUNT_ID", "")
+  git_repo       = get_env("GIT_REPO", "")
+  git_token      = get_env("GITHUB_TOKEN", "")
+
   terragrunt_dir    = get_terragrunt_dir()
   path_parts        = split("/", local.terragrunt_dir)
   environment_index = index(local.path_parts, (basename(dirname(local.terragrunt_dir))))
@@ -10,10 +14,7 @@ locals {
   env_vars_file    = "${dirname(find_in_parent_folders())}/${local.base_name}/${local.environment}/terragrunt.tfvars.json"
   env_vars_global  = jsondecode(file(local.global_vars_file))
 
-  aws_region     = lookup(local.env_vars_global, "aws_region", "eu-west-2")
-  aws_account_id = get_env("AWS_ACCOUNT_ID", "")
-  git_repo       = get_env("GIT_REPO", "")
-  git_token      = get_env("GITHUB_TOKEN", "")
+  aws_region = lookup(local.env_vars_global, "aws_region", "eu-west-2")
 
   repo_ref         = replace(local.git_repo, "/", "-")
   deploy_role_name = "${local.repo_ref}-${local.environment}-github-oidc-role"
