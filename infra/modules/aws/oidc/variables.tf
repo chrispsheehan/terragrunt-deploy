@@ -21,6 +21,7 @@ variable "state_lock_table" {
 variable "oidc_repo_refs" {
   type        = list(string)
   description = "The target repo refs for OIDC access i.e heads/main or tags/*"
+  default     = []
 }
 
 variable "environment" {
@@ -30,6 +31,7 @@ variable "environment" {
 variable "oidc_role_actions" {
   type        = list(string)
   description = "The action(s) to be allowed i.e. [dynamodb:*]"
+  default     = []
 }
 
 variable "deploy_role_name" {

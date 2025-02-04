@@ -1,17 +1,29 @@
+variable "aws_region" {
+  description = "Region to which resources will be deployed"
+  type        = string
+}
+
+variable "aws_account_id" {
+  description = "AWS account to which resources will be deployed"
+  type        = string
+}
+
+variable "deploy_role_name" {
+  description = "AWS role used in ci deployments"
+  type        = string
+}
+
 variable "git_token" {
-  type = string
+  description = "Git token used in authentication of github provider"
+  type        = string
 }
 
 variable "git_repo" {
-  type = string
+  description = "Name of a the github repo"
+  type        = string
 }
 
 variable "environment" {
-  type = string
-}
-
-variable "variables" {
-  description = "Map of environment variables for the GitHub Actions environment"
-  type        = map(string)
-  default     = {}
+  description = "Name of github actions environment"
+  type        = string
 }
