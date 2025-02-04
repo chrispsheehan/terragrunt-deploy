@@ -5,7 +5,7 @@ data "aws_iam_openid_connect_provider" "this" {
 data "aws_iam_policy_document" "terraform_actions" {
   statement {
     actions   = concat(local.oidc_actions, var.oidc_role_actions)
-    resources = var.resources
+    resources = var.oidc_resources
   }
 }
 

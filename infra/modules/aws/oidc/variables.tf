@@ -42,7 +42,7 @@ variable "git_repo" {
   description = "The target repo for OIDC access i.e octo-org/octo-repo"
 }
 
-variable "resources" {
+variable "oidc_resources" {
   type        = list(string)
   description = "The resource(s) to be allowed"
   default     = ["*"]
