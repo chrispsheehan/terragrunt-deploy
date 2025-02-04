@@ -18,7 +18,7 @@ variable "state_lock_table" {
   type        = string
 }
 
-variable "repo_refs" {
+variable "oidc_repo_refs" {
   type        = list(string)
   description = "The target repo refs for OIDC access i.e heads/main or tags/*"
 }

@@ -1,5 +1,5 @@
 locals {
-  repo_refs = [
+  oidc_repo_refs = [
     "heads/main",
     "tags/*"
   ]
@@ -16,6 +16,6 @@ terraform {
 }
 
 inputs = {
-  repo_refs = local.repo_refs
+  oidc_repo_refs = local.oidc_repo_refs
   resources = local.resources
 }
