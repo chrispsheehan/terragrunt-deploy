@@ -2,7 +2,7 @@
 *.terragrunt-cache
 *.terraform
 *.lock.hcl
-*.tfvars.json
+*-debug.tfvars.json
 
 # ignore generated files
 infra/live/*.tf
