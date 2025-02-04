@@ -101,5 +101,5 @@ runs:
     - name: Action Terragrunt
       shell: bash
       working-directory: ${{ inputs.tg_directory }}
-      run: terragrunt ${{ inputs.tg_action }} -auto-approve
+      run: terragrunt ${{ inputs.tg_action }} -auto-approve -compact-warnings
 
