@@ -22,6 +22,8 @@ locals {
   state_key        = "${local.environment}/${local.provider}/${local.module}/terraform.tfstate"
   state_lock_table = "${local.repo_ref}-tf-lockid"
 
+  default_branch = "main"
+
   oidc_role_actions = ["s3:*"]
   oidc_resources    = ["*"]
 }
@@ -65,6 +67,8 @@ inputs = {
 
   state_bucket     = local.state_bucket
   state_lock_table = local.state_lock_table
+
+  default_branch = local.default_branch
 
   oidc_role_actions = local.oidc_role_actions
   oidc_resources    = local.oidc_resources

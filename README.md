@@ -1,19 +1,36 @@
 # terragrunt-deploy
 
+Modular deployments of aws resources leveraging Github action environments. Enabling configuration at all levels.
+
 ## setup local env
+
+Requires a github login with relevant repository privileges.
 
 `just` is used to run `aws` and `terragrunt` commands.
 
 ```sh
 brew install just
 brew install awscli
+brew install gh
 ```
 
-## initiate locally
+## setup repo
 
-Initially the aws OIDC role needs to be created with a local script. This allows Github to execute, via terragrunt, defined actions on defined resources.
+Apply Github repository settings and preferences.
 
-This is done with `just tg ci aws/oidc apply`
+```sh
+just setup
+```
+
+## initiate an environment locally
+
+Creates:
+  - OIDC role for ci deployment to aws resources
+  - Github environment containing required environment variables
+
+```sh
+just init prod
+```
 
 ***WARNING***
 Terragrunt will create the s3 state bucket the first time this is done - this should only happen *ONCE*.
@@ -24,11 +41,16 @@ Remote state S3 bucket your-state-bucket-name-tfstate does not exist or you dont
 
 ## locally plan
 
-This is in the format of `just tg [environment] [provider/module]`[action]
-
-Examples below
+This is in the format of `just tg [environment] [provider/module] [action]`. Example below.
 
 ```sh
-just tg dev aws/bucket plan
-just tg dev github/environment plan
+just tg prod aws/bucket plan
 ```
+
+## variables
+
+Can be set withing an hcl via `inputs = {}` within `infra/terragrunt.hcl` or via `terragrunt.tfvars.json` files at the below paths.
+
+- root level `infra/live/terragrunt.tfvars.json`
+- environment level `infra/live/prod/terragrunt.tfvars.json`
+- module level `infra/live/prod/aws/terragrunt.tfvars.json`
