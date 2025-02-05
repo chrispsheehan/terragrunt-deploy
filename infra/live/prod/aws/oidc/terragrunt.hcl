@@ -4,7 +4,6 @@ locals {
     "heads/${local.default_branch}",
     "tags/*"
   ]
-
 }
 
 include {

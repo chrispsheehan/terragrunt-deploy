@@ -27,3 +27,9 @@ variable "environment" {
   description = "Name of github actions environment"
   type        = string
 }
+
+variable "oidc_repo_refs" {
+  type        = list(string)
+  description = "The target repo refs for environment to deploy from i.e heads/main or tags/*"
+  default     = []
+}
