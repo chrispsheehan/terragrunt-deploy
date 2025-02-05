@@ -7,15 +7,9 @@ locals {
   module      = local.path_parts[length(local.path_parts) - 1]
   provider    = local.path_parts[length(local.path_parts) - 2]
   environment = local.path_parts[length(local.path_parts) - 3]
-  base_name   = local.path_parts[length(local.path_parts) - 4]
 
-  # Load HCL configurations safely
   global_vars   = read_terragrunt_config(find_in_parent_folders("global_vars.hcl"))
-
-  # global_vars_file   = "${dirname(find_in_parent_folders())}/${local.base_name}/terragrunt.tfvars.json"
-  env_vars_file      = "${dirname(find_in_parent_folders())}/${local.base_name}/${local.environment}/terragrunt.tfvars.json"
-  provider_vars_file = "${dirname(find_in_parent_folders())}/${local.base_name}/${local.environment}/${local.provider}/terragrunt.tfvars.json"
-  # global_vars        = jsondecode(file(local.global_vars_file))
+  environment_vars   = read_terragrunt_config(find_in_parent_folders("environment_vars.hcl"))
 
   aws_region = local.global_vars.inputs.aws_region
 
@@ -25,8 +19,6 @@ locals {
   state_key        = "${local.environment}/${local.provider}/${local.module}/terraform.tfstate"
   state_lock_table = "${local.repo_ref}-tf-lockid"
 
-  default_branch = "main"
-
   oidc_role_actions = ["s3:*"]
   oidc_resources    = ["*"]
 }
@@ -35,17 +27,8 @@ terraform {
   before_hook "print_locals" {
     commands = ["init", "plan", "apply"]
     execute = [
-      "bash", "-c", "echo STATE:${local.state_bucket}/${local.state_key} TABLE:${local.state_lock_table} ${local.provider_vars_file}"
+      "bash", "-c", "echo STATE:${local.state_bucket}/${local.state_key} TABLE:${local.state_lock_table}"
     ]
-  }
-
-  extra_arguments "tfvars" {
-    commands = get_terraform_commands_that_need_vars()
-    arguments = flatten([
-      # fileexists(local.global_vars_file) ? ["-var-file=${local.global_vars_file}"] : [],
-      fileexists(local.env_vars_file) ? ["-var-file=${local.env_vars_file}"] : [],
-      fileexists(local.provider_vars_file) ? ["-var-file=${local.provider_vars_file}"] : []
-    ])
   }
 }
 
@@ -62,6 +45,7 @@ remote_state {
 
 inputs = merge(
   local.global_vars.inputs,
+  local.environment_vars.inputs,
   {
     aws_account_id   = local.aws_account_id
     project_name     = local.repo_ref
@@ -72,8 +56,6 @@ inputs = merge(
 
     state_bucket     = local.state_bucket
     state_lock_table = local.state_lock_table
-
-    default_branch = local.default_branch
 
     oidc_role_actions = local.oidc_role_actions
     oidc_resources    = local.oidc_resources
