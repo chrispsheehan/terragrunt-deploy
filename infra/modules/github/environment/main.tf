@@ -5,7 +5,7 @@ resource "github_repository_environment" "this" {
 
   deployment_branch_policy {
     protected_branches     = false
-    custom_branch_policies = true 
+    custom_branch_policies = true
   }
 }
 

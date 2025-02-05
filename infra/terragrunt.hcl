@@ -8,8 +8,8 @@ locals {
   provider    = local.path_parts[length(local.path_parts) - 2]
   environment = local.path_parts[length(local.path_parts) - 3]
 
-  global_vars   = read_terragrunt_config(find_in_parent_folders("global_vars.hcl"))
-  environment_vars   = read_terragrunt_config(find_in_parent_folders("${local.environment}_vars.hcl"))
+  global_vars      = read_terragrunt_config(find_in_parent_folders("global_vars.hcl"))
+  environment_vars = read_terragrunt_config(find_in_parent_folders("${local.environment}_vars.hcl"))
 
   aws_region = local.global_vars.inputs.aws_region
 
@@ -53,11 +53,7 @@ inputs = merge(
     git_repo         = local.git_repo
     git_token        = local.git_token
     deploy_role_name = local.deploy_role_name
-
     state_bucket     = local.state_bucket
     state_lock_table = local.state_lock_table
-
-    oidc_role_actions = local.oidc_role_actions
-    oidc_resources    = local.oidc_resources
   }
 )
