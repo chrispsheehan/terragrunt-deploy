@@ -11,13 +11,12 @@ locals {
   global_vars      = read_terragrunt_config(find_in_parent_folders("global_vars.hcl"))
   environment_vars = read_terragrunt_config(find_in_parent_folders("${local.environment}_vars.hcl"))
 
-  aws_region = local.global_vars.inputs.aws_region
-
-  repo_ref         = replace(local.git_repo, "/", "-")
-  deploy_role_name = "${local.repo_ref}-${local.environment}-github-oidc-role"
-  state_bucket     = "${local.aws_account_id}-${local.aws_region}-${local.repo_ref}-tfstate"
+  aws_region       = local.global_vars.inputs.aws_region
+  project_name     = replace(local.git_repo, "/", "-")
+  deploy_role_name = "${local.project_name}-${local.environment}-github-oidc-role"
+  state_bucket     = "${local.aws_account_id}-${local.aws_region}-${local.project_name}-tfstate"
   state_key        = "${local.environment}/${local.provider}/${local.module}/terraform.tfstate"
-  state_lock_table = "${local.repo_ref}-tf-lockid"
+  state_lock_table = "${local.project_name}-tf-lockid"
 }
 
 terraform {
@@ -45,7 +44,7 @@ inputs = merge(
   local.environment_vars.inputs,
   {
     aws_account_id   = local.aws_account_id
-    project_name     = local.repo_ref
+    project_name     = local.project_name
     environment      = local.environment
     git_repo         = local.git_repo
     git_token        = local.git_token
