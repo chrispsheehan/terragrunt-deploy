@@ -9,12 +9,15 @@ locals {
   environment = local.path_parts[length(local.path_parts) - 3]
   base_name   = local.path_parts[length(local.path_parts) - 4]
 
-  global_vars_file   = "${dirname(find_in_parent_folders())}/${local.base_name}/terragrunt.tfvars.json"
+  # Load HCL configurations safely
+  global_vars   = read_terragrunt_config(find_in_parent_folders("global_vars.hcl"))
+
+  # global_vars_file   = "${dirname(find_in_parent_folders())}/${local.base_name}/terragrunt.tfvars.json"
   env_vars_file      = "${dirname(find_in_parent_folders())}/${local.base_name}/${local.environment}/terragrunt.tfvars.json"
   provider_vars_file = "${dirname(find_in_parent_folders())}/${local.base_name}/${local.environment}/${local.provider}/terragrunt.tfvars.json"
-  global_vars        = jsondecode(file(local.global_vars_file))
+  # global_vars        = jsondecode(file(local.global_vars_file))
 
-  aws_region = lookup(local.global_vars, "aws_region", "eu-west-2")
+  aws_region = local.global_vars.inputs.aws_region
 
   repo_ref         = replace(local.git_repo, "/", "-")
   deploy_role_name = "${local.repo_ref}-${local.environment}-github-oidc-role"
@@ -39,7 +42,7 @@ terraform {
   extra_arguments "tfvars" {
     commands = get_terraform_commands_that_need_vars()
     arguments = flatten([
-      fileexists(local.global_vars_file) ? ["-var-file=${local.global_vars_file}"] : [],
+      # fileexists(local.global_vars_file) ? ["-var-file=${local.global_vars_file}"] : [],
       fileexists(local.env_vars_file) ? ["-var-file=${local.env_vars_file}"] : [],
       fileexists(local.provider_vars_file) ? ["-var-file=${local.provider_vars_file}"] : []
     ])
@@ -57,19 +60,22 @@ remote_state {
   }
 }
 
-inputs = {
-  aws_account_id   = local.aws_account_id
-  project_name     = local.repo_ref
-  environment      = local.environment
-  git_repo         = local.git_repo
-  git_token        = local.git_token
-  deploy_role_name = local.deploy_role_name
+inputs = merge(
+  local.global_vars.inputs,
+  {
+    aws_account_id   = local.aws_account_id
+    project_name     = local.repo_ref
+    environment      = local.environment
+    git_repo         = local.git_repo
+    git_token        = local.git_token
+    deploy_role_name = local.deploy_role_name
 
-  state_bucket     = local.state_bucket
-  state_lock_table = local.state_lock_table
+    state_bucket     = local.state_bucket
+    state_lock_table = local.state_lock_table
 
-  default_branch = local.default_branch
+    default_branch = local.default_branch
 
-  oidc_role_actions = local.oidc_role_actions
-  oidc_resources    = local.oidc_resources
-}
+    oidc_role_actions = local.oidc_role_actions
+    oidc_resources    = local.oidc_resources
+  }
+)
