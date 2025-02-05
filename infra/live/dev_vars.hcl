@@ -1,7 +1,6 @@
 locals {
   deploy_branches = [
-    "dev",
-    "github-actions-init"
+    "dev"
   ]
   # aws_account_id = 700011111111 could set a different account id here
 }

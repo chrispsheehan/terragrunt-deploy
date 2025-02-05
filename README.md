@@ -1,6 +1,6 @@
 # terragrunt-deploy
 
-Modular deployments of aws resources leveraging Github action environments. Enabling configuration at all levels.
+Repo configuration and modular deployments of aws resources leveraging Github action environments. Enabling configuration at global and environment levels.
 
 ## setup local env
 
@@ -49,8 +49,8 @@ just tg prod aws/bucket plan
 
 ## variables
 
-Can be set withing an hcl via `inputs = {}` within `infra/terragrunt.hcl` or via `terragrunt.tfvars.json` files at the below paths.
+Can be set withing an hcl via `inputs = {}` within `infra/terragrunt.hcl` or via files at the below paths.
 
-- root level `infra/live/terragrunt.tfvars.json`
-- environment level `infra/live/prod/terragrunt.tfvars.json`
-- module level `infra/live/prod/aws/terragrunt.tfvars.json`
+- root level `infra/live/global_vars.hcl`
+- environment level `infra/live/[env_name]_vars.hcl`
+  - example `infra/live/dev_vars.hcl`

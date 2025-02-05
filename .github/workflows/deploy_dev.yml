@@ -3,9 +3,6 @@ description: Deploy the Dev resources using the dev github environment
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - github-actions-init
 
 permissions:
     id-token: write
