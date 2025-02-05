@@ -9,7 +9,7 @@ locals {
   environment = local.path_parts[length(local.path_parts) - 3]
 
   global_vars   = read_terragrunt_config(find_in_parent_folders("global_vars.hcl"))
-  environment_vars   = read_terragrunt_config(find_in_parent_folders("environment_vars.hcl"))
+  environment_vars   = read_terragrunt_config(find_in_parent_folders("${local.environment}_vars.hcl"))
 
   aws_region = local.global_vars.inputs.aws_region
 
