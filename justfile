@@ -51,19 +51,10 @@ validate:
 # Terragrunt operation on {{module}} containing terragrunt.hcl
 tg env module op:
     #!/usr/bin/env bash
-    export AWS_REGION=eu-west-2
     export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
     export GIT_REPO=$(just get-git-repo)
-    cd {{justfile_directory()}}/infra/live/{{env}}/{{module}} ; terragrunt {{op}} --terragrunt-debug
-
-
-ci-tg-apply module:
-    #!/usr/bin/env bash
-    set -euo pipefail
-
-    just tg {{module}} init
-    just tg {{module}} 'run-all validate -no-color'
-    just tg {{module}} 'apply -auto-approve -input=false -no-color'
+    cd {{justfile_directory()}}/infra/live/{{env}}/{{module}} ; terragrunt init
+    cd {{justfile_directory()}}/infra/live/{{env}}/{{module}} ; terragrunt {{op}}
 
 
 PROJECT_DIR := justfile_directory()
@@ -75,3 +66,22 @@ clean-terragrunt-cache:
     find {{PROJECT_DIR}} -type f -name ".terraform.lock.hcl" -exec rm -f {} +
     @echo "Clearing Terragrunt cache..."
     rm -rf ~/.terragrunt
+
+init env:
+    #!/usr/bin/env bash
+    if ! gh auth status &> /dev/null; then
+        gh auth login
+    fi
+    GITHUB_TOKEN=$(gh auth token 2>/dev/null)
+    export GITHUB_TOKEN
+    just tg {{env}} aws/oidc apply
+    just tg {{env}} github/environment apply
+
+setup:
+    #!/usr/bin/env bash
+    if ! gh auth status &> /dev/null; then
+        gh auth login
+    fi
+    GITHUB_TOKEN=$(gh auth token 2>/dev/null)
+    export GITHUB_TOKEN
+    just tg ci github/repo apply

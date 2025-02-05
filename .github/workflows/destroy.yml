@@ -1,0 +1,28 @@
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        required: true
+        type: string
+
+concurrency: # only run one instance of workflow at any one time
+  group: ${{ github.workflow }}-${{inputs.environment}}
+  cancel-in-progress: false
+
+permissions:
+    id-token: write
+    contents: read
+
+jobs:
+  bucket:
+    environment:
+      name: ${{inputs.environment}} # uses the environment containing the env vars (vars.) used in the below action
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/terragrunt_action
+        with:
+          aws_oidc_role_arn: ${{ vars.AWS_OIDC_ROLE_ARN }}
+          aws_region: ${{ vars.AWS_REGION }}
+          tg_directory: infra/live/${{inputs.environment}}/aws/bucket
+          tg_action: destroy

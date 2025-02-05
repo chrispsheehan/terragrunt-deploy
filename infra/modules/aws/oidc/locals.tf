@@ -1,4 +1,13 @@
 locals {
+  repo_branch_refs = [for ref in var.deploy_branches : format("repo:%s:ref:heads/%s", var.git_repo, ref)]
+  repo_tag_refs    = [for ref in var.deploy_tags : format("repo:%s:ref:tags/%s", var.git_repo, ref)]
+  repo_subjects    = concat(local.repo_branch_refs, local.repo_tag_refs)
+  allowed_entities = concat(
+    [
+      "repo:${var.git_repo}:environment:${var.environment}"
+    ],
+    local.repo_subjects
+  )
   oidc_domain = "token.actions.githubusercontent.com"
   oidc_actions = [
     "sts:AssumeRoleWithWebIdentity",

@@ -1,22 +1,22 @@
 locals {
-  aws_region     = get_env("AWS_REGION", "")
   aws_account_id = get_env("AWS_ACCOUNT_ID", "")
   git_repo       = get_env("GIT_REPO", "")
+  git_token      = get_env("GITHUB_TOKEN", "")
 
-  aws_region_valid     = length(local.aws_region) > 0 ? true : error("AWS_REGION must be set as an environment variable.")
-  aws_account_id_valid = length(local.aws_account_id) > 0 ? true : error("AWS_ACCOUNT_ID must be set as an environment variable.")
-  git_repo_valid       = length(local.git_repo) > 0 ? true : error("GIT_REPO must be set as an environment variable.")
+  path_parts  = split("/", get_terragrunt_dir())
+  module      = local.path_parts[length(local.path_parts) - 1]
+  provider    = local.path_parts[length(local.path_parts) - 2]
+  environment = local.path_parts[length(local.path_parts) - 3]
 
-  terragrunt_dir    = get_terragrunt_dir()
-  repo_ref          = replace(local.git_repo, "/", "-")
-  path_parts        = split("/", local.terragrunt_dir)
-  environment       = basename(dirname(local.terragrunt_dir))
-  environment_index = index(local.path_parts, local.environment)
-  module_path       = join("/", slice(local.path_parts, local.environment_index, length(local.path_parts)))
+  global_vars      = read_terragrunt_config(find_in_parent_folders("global_vars.hcl"))
+  environment_vars = read_terragrunt_config(find_in_parent_folders("${local.environment}_vars.hcl"))
 
-  state_bucket     = "${local.aws_account_id}-${local.aws_region}-${local.repo_ref}-tfstate"
-  state_key        = "${local.module_path}/terraform.tfstate"
-  state_lock_table = "${local.repo_ref}-tf-lockid"
+  aws_region       = local.global_vars.inputs.aws_region
+  project_name     = replace(local.git_repo, "/", "-")
+  deploy_role_name = "${local.project_name}-${local.environment}-github-oidc-role"
+  state_bucket     = "${local.aws_account_id}-${local.aws_region}-${local.project_name}-tfstate"
+  state_key        = "${local.environment}/${local.provider}/${local.module}/terraform.tfstate"
+  state_lock_table = "${local.project_name}-tf-lockid"
 }
 
 terraform {
@@ -39,13 +39,17 @@ remote_state {
   }
 }
 
-inputs = {
-  aws_region     = local.aws_region
-  aws_account_id = local.aws_account_id
-  project_name   = local.repo_ref
-  environment    = local.environment
-  git_repo       = local.git_repo
-
-  state_bucket     = local.state_bucket
-  state_lock_table = local.state_lock_table
-}
+inputs = merge(
+  local.global_vars.inputs,
+  local.environment_vars.inputs,
+  {
+    aws_account_id   = local.aws_account_id
+    project_name     = local.project_name
+    environment      = local.environment
+    git_repo         = local.git_repo
+    git_token        = local.git_token
+    deploy_role_name = local.deploy_role_name
+    state_bucket     = local.state_bucket
+    state_lock_table = local.state_lock_table
+  }
+)

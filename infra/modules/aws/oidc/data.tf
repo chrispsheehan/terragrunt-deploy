@@ -4,8 +4,8 @@ data "aws_iam_openid_connect_provider" "this" {
 
 data "aws_iam_policy_document" "terraform_actions" {
   statement {
-    actions   = concat(local.oidc_actions, var.actions)
-    resources = var.resources
+    actions   = concat(local.oidc_actions, var.oidc_role_actions)
+    resources = var.oidc_resources
   }
 }
 
@@ -29,7 +29,7 @@ data "aws_iam_policy_document" "github_actions" {
       test     = "StringLike"
       variable = "${local.oidc_domain}:sub"
 
-      values = var.repo_refs
+      values = local.allowed_entities
     }
   }
 }
@@ -43,6 +43,12 @@ data "aws_dynamodb_table" "tf_lock_table" {
 }
 
 data "aws_iam_policy_document" "terraform_state" {
+  statement {
+    actions = local.oidc_actions
+    resources = [
+      "*"
+    ]
+  }
 
   statement {
     actions = local.iam_actions
