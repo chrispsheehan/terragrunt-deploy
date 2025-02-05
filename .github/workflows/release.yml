@@ -26,3 +26,12 @@ jobs:
             zips/*
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  prod:
+    needs: release
+    permissions:
+      id-token: write
+      contents: read
+    uses: ./.github/workflows/deploy.yml
+    with:
+      environment: prod
