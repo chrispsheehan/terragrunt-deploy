@@ -54,3 +54,7 @@ Can be set withing an hcl via `inputs = {}` within `infra/terragrunt.hcl` or via
 - root level `infra/live/global_vars.hcl`
 - environment level `infra/live/[env_name]_vars.hcl`
   - example `infra/live/dev_vars.hcl`
+
+## releases
+
+Update version within `pyproject.toml` and commit to `main` to trigger a release.
