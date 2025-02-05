@@ -1,13 +1,12 @@
 locals {
-  global_vars      = read_terragrunt_config("global_vars.hcl")
-  default_branch   = local.global_vars.inputs.default_branch
+  global_vars    = read_terragrunt_config("global_vars.hcl")
+  default_branch = local.global_vars.inputs.default_branch
 
-  oidc_repo_refs = [
-    "heads/${local.default_branch}",
-    "tags/*"
-  ]
+  deploy_branches = [local.default_branch]
+  deploy_tags     = ["*"]
 }
 
 inputs = {
-  oidc_repo_refs = local.oidc_repo_refs
+  deploy_branches = local.deploy_branches
+  deploy_tags     = local.deploy_tags
 }

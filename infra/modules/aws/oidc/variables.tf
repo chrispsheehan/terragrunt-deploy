@@ -18,9 +18,15 @@ variable "state_lock_table" {
   type        = string
 }
 
-variable "oidc_repo_refs" {
+variable "deploy_branches" {
   type        = list(string)
-  description = "The target repo refs for OIDC access i.e heads/main or tags/*"
+  description = "The target repo branches for OIDC access i.e main or feature/this"
+  default     = []
+}
+
+variable "deploy_tags" {
+  type        = list(string)
+  description = "The target repo tag for OIDC access i.e * or v*"
   default     = []
 }
 

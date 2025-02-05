@@ -28,8 +28,14 @@ variable "environment" {
   type        = string
 }
 
-variable "oidc_repo_refs" {
+variable "deploy_branches" {
   type        = list(string)
-  description = "The target repo refs for environment to deploy from i.e heads/main or tags/*"
+  description = "The target branches for environment to deploy from i.e main"
+  default     = []
+}
+
+variable "deploy_tags" {
+  type        = list(string)
+  description = "The target tags for environment to deploy from i.e * for all"
   default     = []
 }
