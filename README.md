@@ -58,3 +58,5 @@ Can be set withing an hcl via `inputs = {}` within `infra/terragrunt.hcl` or via
 ## releases
 
 Update version within `pyproject.toml` and commit to `main` to trigger a release.
+
+Prod is deployed when a release is created.
