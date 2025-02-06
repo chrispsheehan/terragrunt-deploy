@@ -31,20 +31,6 @@ jobs:
         run: |
           echo "CACHE_HIT=${{ env.CACHE_HIT }}" >> $GITHUB_OUTPUT
 
-  oidc-cache:
-    needs: oidc
-    if: ${{ needs.oidc.outputs.cache_hit != 'true'}}
-    environment:
-      name: ${{inputs.environment}}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/terragrunt_cache
-        with:
-          aws_oidc_role_arn: ${{ vars.AWS_OIDC_ROLE_ARN }}
-          aws_region: ${{ vars.AWS_REGION }}
-          tg_directory: infra/live/${{inputs.environment}}/aws/oidc
-
   bucket:
     needs: oidc
     environment:
@@ -63,17 +49,3 @@ jobs:
       - id: cache-hit
         run: |
           echo "CACHE_HIT=${{ env.CACHE_HIT }}" >> $GITHUB_OUTPUT
-
-  bucket-cache:
-    needs: bucket
-    if: ${{ needs.bucket.outputs.cache_hit != 'true'}}
-    environment:
-      name: ${{inputs.environment}}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/terragrunt_cache
-        with:
-          aws_oidc_role_arn: ${{ vars.AWS_OIDC_ROLE_ARN }}
-          aws_region: ${{ vars.AWS_REGION }}
-          tg_directory: infra/live/${{inputs.environment}}/aws/bucket
