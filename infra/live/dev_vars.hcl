@@ -1,6 +1,10 @@
 locals {
+  global_vars    = read_terragrunt_config("global_vars.hcl")
+  default_branch = local.global_vars.inputs.default_branch
+
   deploy_branches = [
-    "dev"
+    "feature/temp-debug-branch", # example additional branch to deploy from
+    local.default_branch
   ]
 }
 
