@@ -48,7 +48,7 @@ format:
 get-cache-key os tg_directory:
     #!/usr/bin/env bash
     LOCK_HASH=$(sha256sum "{{ tg_directory }}/.terraform.lock.hcl" | awk '{ print $1 }')
-    echo "terraform-{{ os }}-{{ tg_directory }}-${LOCK_HASH}"
+    echo "terragrunt-{{ os }}-{{ tg_directory }}-${LOCK_HASH}"
 
 
 validate:
