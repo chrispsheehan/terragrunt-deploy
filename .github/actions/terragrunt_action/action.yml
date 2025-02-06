@@ -81,6 +81,7 @@ runs:
       shell: bash
       working-directory: ${{ inputs.tg_directory }}
       run: |
+        ls -a
         terragrunt init
 
     - name: Action Terragrunt
