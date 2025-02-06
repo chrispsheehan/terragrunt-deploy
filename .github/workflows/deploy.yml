@@ -18,7 +18,7 @@ jobs:
       name: ${{inputs.environment}} # uses the environment containing the env vars (vars.) used in the below action
     runs-on: ubuntu-latest
     outputs:
-      cache_hit: ${{ steps.cache-hit.outputs.CACHE_KEY }}
+      cache_hit: ${{ steps.cache-hit.outputs.CACHE_HIT }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/terragrunt_action
@@ -29,7 +29,7 @@ jobs:
           tg_action: apply
       - id: cache-hit
         run: |
-          echo "CACHE_KEY=${{ env.CACHE_KEY }}" >> $GITHUB_OUTPUT
+          echo "CACHE_HIT=${{ env.CACHE_HIT }}" >> $GITHUB_OUTPUT
 
   oidc-cache:
     needs: oidc
@@ -51,7 +51,7 @@ jobs:
       name: ${{inputs.environment}}
     runs-on: ubuntu-latest
     outputs:
-      cache_hit: ${{ steps.cache-hit.outputs.CACHE_KEY }}
+      cache_hit: ${{ steps.cache-hit.outputs.CACHE_HIT }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/terragrunt_action
@@ -62,7 +62,7 @@ jobs:
           tg_action: apply
       - id: cache-hit
         run: |
-          echo "CACHE_KEY=${{ env.CACHE_KEY }}" >> $GITHUB_OUTPUT
+          echo "CACHE_HIT=${{ env.CACHE_HIT }}" >> $GITHUB_OUTPUT
 
   bucket-cache:
     needs: bucket
