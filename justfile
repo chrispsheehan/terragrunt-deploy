@@ -2,27 +2,6 @@ _default:
     just --list
 
 
-get-git-repo:
-    #!/bin/bash
-    origin_url=$(git remote get-url origin 2>/dev/null)
-
-    if [ -z "$origin_url" ]; then
-        echo "No remote named 'origin' found."
-        exit 1
-    fi
-
-    if [[ $origin_url == git@* ]]; then
-        repo_name=$(echo "$origin_url" | sed -e 's/^git@[^:]*://g' -e 's/.git$//')
-    elif [[ $origin_url == http* ]]; then
-        repo_name=$(echo "$origin_url" | sed -e 's/^https:\/\/[^/]*\///g' -e 's/.git$//')
-    else
-        echo "Unknown URL format: $origin_url"
-        exit 1
-    fi
-
-    echo "$repo_name"
-
-
 get-git-token:
     #!/usr/bin/env bash
     if ! gh auth status &> /dev/null; then
