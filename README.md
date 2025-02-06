@@ -12,6 +12,7 @@ Requires a github login with relevant repository privileges.
 brew install just
 brew install awscli
 brew install gh
+brew install coreutils
 ```
 
 ## setup repo

@@ -1,7 +1,7 @@
 locals {
-  aws_account_id = get_env("AWS_ACCOUNT_ID", "")
-  git_repo       = get_env("GIT_REPO", "")
-  git_token      = get_env("GITHUB_TOKEN", "")
+  git_remote     = run_cmd("--terragrunt-quiet", "git", "remote", "get-url", "origin")
+  git_repo       = regex("[/:]([-0-9_A-Za-z]*/[-0-9_A-Za-z]*)[^/]*$", local.git_remote)[0]
+  aws_account_id = get_aws_account_id()
 
   path_parts  = split("/", get_terragrunt_dir())
   module      = local.path_parts[length(local.path_parts) - 1]
@@ -21,7 +21,7 @@ locals {
 
 terraform {
   before_hook "print_locals" {
-    commands = ["init", "plan", "apply"]
+    commands = ["init"]
     execute = [
       "bash", "-c", "echo STATE:${local.state_bucket}/${local.state_key} TABLE:${local.state_lock_table}"
     ]
@@ -47,7 +47,6 @@ inputs = merge(
     project_name     = local.project_name
     environment      = local.environment
     git_repo         = local.git_repo
-    git_token        = local.git_token
     deploy_role_name = local.deploy_role_name
     state_bucket     = local.state_bucket
     state_lock_table = local.state_lock_table

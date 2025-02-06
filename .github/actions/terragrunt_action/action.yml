@@ -51,20 +51,14 @@ runs:
         role-to-assume: ${{ inputs.aws_oidc_role_arn }}
         aws-region: ${{ inputs.aws_region }}
 
-    - name: Set AWS account ID
-      shell: bash
-      run: echo "AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)" >> $GITHUB_ENV
-
-    - name: Set git repo name
-      shell: bash
-      run: echo "GIT_REPO=${{ github.repository }}" >> $GITHUB_ENV
-
     - name: Determine Cache Key
       id: cache-key
       shell: bash
       run: |
-        FILES_HASH=$(find . -type f \( -name "*.hcl" -o -name "*.tf" \) -exec sha256sum {} + | sha256sum | awk '{ print $1 }')
-        echo "key=terraform-${{ runner.os }}-${{ inputs.tg_directory }}-${FILES_HASH}" >> $GITHUB_OUTPUT
+        CACHE_KEY=$(just get-cache-key ${{ runner.os }} ${{ inputs.tg_directory }})
+        echo "CACHE_KEY=${CACHE_KEY}"
+        echo "CACHE_KEY=${CACHE_KEY}" >> $GITHUB_OUTPUT
+        echo "CACHE_KEY=${CACHE_KEY}" >> $GITHUB_ENV
 
     - name: Restore Terraform Cache
       id: cache-restore
@@ -73,33 +67,27 @@ runs:
         path: |
           ~/.terraform.d/plugin-cache
           ${{ inputs.tg_directory }}/.terragrunt-cache
-        key: ${{ steps.cache-key.outputs.key }}
+        key: ${{ steps.cache-key.outputs.CACHE_KEY }}
         restore-keys: terraform-${{ runner.os }}-
 
-    - name: Init Terragrunt
-      shell: bash
-      working-directory: ${{ inputs.tg_directory }}
-      run: |
-        mkdir -p ~/.terraform.d/plugin-cache
-        export TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache"
-        terragrunt init
-
-    - name: Debug Cache Hit Output
+    - name: Cache Hit Output
       shell: bash
       run: |
         echo "Cache Hit: ${{ steps.cache-restore.outputs.cache-hit }}"
+        echo "CACHE_HIT=${{ steps.cache-restore.outputs.cache-hit }}" >> $GITHUB_ENV
 
-    - name: Save Terraform Cache if invalidated
-      if: ${{ steps.cache-restore.outputs.cache-hit != 'true' }}
-      uses: actions/cache/save@v3
-      with:
-        path: |
-          ~/.terraform.d/plugin-cache
-          ${{ inputs.tg_directory }}/.terragrunt-cache
-        key: ${{ steps.cache-key.outputs.key }}
+    - name: Init Terragrunt
+      if: steps.cache-restore.outputs.cache-hit != 'true'
+      shell: bash
+      working-directory: ${{ inputs.tg_directory }}
+      run: |
+        export TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache"
+        mkdir -p ~/.terraform.d/plugin-cache
+        terragrunt init
 
     - name: Action Terragrunt
       shell: bash
       working-directory: ${{ inputs.tg_directory }}
-      run: terragrunt ${{ inputs.tg_action }} -auto-approve -compact-warnings
+      run: |
+        terragrunt ${{ inputs.tg_action }} -auto-approve -compact-warnings --terragrunt-no-auto-init
 

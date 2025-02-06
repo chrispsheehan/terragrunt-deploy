@@ -2,25 +2,13 @@ _default:
     just --list
 
 
-get-git-repo:
-    #!/bin/bash
-    origin_url=$(git remote get-url origin 2>/dev/null)
-
-    if [ -z "$origin_url" ]; then
-        echo "No remote named 'origin' found."
-        exit 1
+get-git-token:
+    #!/usr/bin/env bash
+    if ! gh auth status &> /dev/null; then
+        gh auth login
     fi
-
-    if [[ $origin_url == git@* ]]; then
-        repo_name=$(echo "$origin_url" | sed -e 's/^git@[^:]*://g' -e 's/.git$//')
-    elif [[ $origin_url == http* ]]; then
-        repo_name=$(echo "$origin_url" | sed -e 's/^https:\/\/[^/]*\///g' -e 's/.git$//')
-    else
-        echo "Unknown URL format: $origin_url"
-        exit 1
-    fi
-
-    echo "$repo_name"
+    GITHUB_TOKEN=$(gh auth token 2>/dev/null)
+    echo $GITHUB_TOKEN
 
 
 branch name:
@@ -34,6 +22,12 @@ format:
     #!/usr/bin/env bash
     terraform fmt -recursive
     terragrunt hclfmt
+
+
+get-cache-key os tg_directory:
+    #!/usr/bin/env bash
+    LOCK_HASH=$(sha256sum "{{ tg_directory }}/.terraform.lock.hcl" | awk '{ print $1 }')
+    echo "terragrunt-{{ os }}-{{ tg_directory }}-${LOCK_HASH}"
 
 
 validate:
@@ -51,10 +45,26 @@ validate:
 # Terragrunt operation on {{module}} containing terragrunt.hcl
 tg env module op:
     #!/usr/bin/env bash
-    export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
-    export GIT_REPO=$(just get-git-repo)
-    cd {{justfile_directory()}}/infra/live/{{env}}/{{module}} ; terragrunt init
     cd {{justfile_directory()}}/infra/live/{{env}}/{{module}} ; terragrunt {{op}}
+
+
+tg-all op:
+    #!/usr/bin/env bash
+    cd {{justfile_directory()}}/infra/live 
+    terragrunt run-all {{op}}
+
+
+init env:
+    #!/usr/bin/env bash
+    export TF_VAR_git_token=$(just get-git-token)
+    just tg {{env}} aws/oidc apply
+    just tg {{env}} github/environment apply
+
+
+setup:
+    #!/usr/bin/env bash
+    export TF_VAR_git_token=$(just get-git-token)
+    just tg ci github/repo apply
 
 
 PROJECT_DIR := justfile_directory()
@@ -66,22 +76,3 @@ clean-terragrunt-cache:
     find {{PROJECT_DIR}} -type f -name ".terraform.lock.hcl" -exec rm -f {} +
     @echo "Clearing Terragrunt cache..."
     rm -rf ~/.terragrunt
-
-init env:
-    #!/usr/bin/env bash
-    if ! gh auth status &> /dev/null; then
-        gh auth login
-    fi
-    GITHUB_TOKEN=$(gh auth token 2>/dev/null)
-    export GITHUB_TOKEN
-    just tg {{env}} aws/oidc apply
-    just tg {{env}} github/environment apply
-
-setup:
-    #!/usr/bin/env bash
-    if ! gh auth status &> /dev/null; then
-        gh auth login
-    fi
-    GITHUB_TOKEN=$(gh auth token 2>/dev/null)
-    export GITHUB_TOKEN
-    just tg ci github/repo apply
