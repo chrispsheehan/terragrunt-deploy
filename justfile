@@ -36,6 +36,13 @@ format:
     terragrunt hclfmt
 
 
+get-cache-key os tg_directory:
+    #!/usr/bin/env bash
+    LOCK_HASH=$(sha256sum "{{ tg_directory }}/.terraform.lock.hcl" | awk '{ print $1 }')
+    CACHE_HASH=$(find "{{ tg_directory }}/.terragrunt-cache" -type f -exec sha256sum {} + | sha256sum | awk '{ print $1 }')
+    echo "key=terraform-{{ os }}-{{ tg_directory }}-${LOCK_HASH}-${CACHE_HASH}"
+
+
 validate:
     #!/usr/bin/env bash
     for dir in terraform_modules/*; do
@@ -67,6 +74,7 @@ clean-terragrunt-cache:
     @echo "Clearing Terragrunt cache..."
     rm -rf ~/.terragrunt
 
+
 init env:
     #!/usr/bin/env bash
     if ! gh auth status &> /dev/null; then
@@ -76,6 +84,7 @@ init env:
     export GITHUB_TOKEN
     just tg {{env}} aws/oidc apply
     just tg {{env}} github/environment apply
+
 
 setup:
     #!/usr/bin/env bash
