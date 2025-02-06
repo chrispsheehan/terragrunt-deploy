@@ -42,10 +42,10 @@ jobs:
       - toml-version
     runs-on: ubuntu-latest
     outputs:
-        release: ${{ steps.check-tag.outputs.RELEASE }}
-        tag: ${{ steps.set-tag.outputs.TAG }}
+      release: ${{ steps.check-tag.outputs.RELEASE }}
+      tag: ${{ steps.set-tag.outputs.TAG }}
     env:
-        TOML_VERSION: ${{ needs.toml-version.outputs.version }}
+      TOML_VERSION: ${{ needs.toml-version.outputs.version }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -82,6 +82,8 @@ jobs:
   create-release:
     needs: validate
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     env:
       TAG: ${{ needs.validate.outputs.tag }}
     if: ${{ needs.validate.outputs.release == 'true' }}
