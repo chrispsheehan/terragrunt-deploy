@@ -1,0 +1,62 @@
+name: "Terraform cache init files"
+description: "Sets up Just, Terraform, Terragrunt, and configures AWS OIDC authentication"
+inputs:
+  just_version:
+    description: "Version of Just to install"
+    required: false
+    default: "1.0.0"
+  tf_version:
+    description: "Version of Terraform to install"
+    required: false
+    default: "1.5.7"
+  tg_version:
+    description: "Version of Terragrunt to install"
+    required: false
+    default: "0.51.5"
+  tg_directory:
+    description: "Module directory to preform action upon"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install Just
+      uses: extractions/setup-just@v2
+      with:
+        just-version: ${{ inputs.just_version }}
+
+    - name: Install Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: ${{ inputs.tf_version }}
+        terraform_wrapper: false
+
+    - name: Install Terragrunt
+      uses: autero1/action-terragrunt@v1.3.2
+      with:
+        terragrunt_version: ${{ inputs.tg_version }}
+
+    - name: Determine Cache Key
+      id: cache-key
+      shell: bash
+      run: |
+        CACHE_KEY=$(just get-cache-key ${{ runner.os } ${{ inputs.tg_directory }}
+        echo "CACHE_KEY=${HASH_KEY}" >> $GITHUB_OUTPUT
+
+    - name: Init Terragrunt
+      shell: bash
+      working-directory: ${{ inputs.tg_directory }}
+      run: |
+        mkdir -p ~/.terraform.d/plugin-cache
+        export TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache"
+        terragrunt init
+
+    - name: Save Terraform Cache
+      uses: actions/cache/save@v3
+      with:
+        path: |
+          ~/.terraform.d/plugin-cache
+          ${{ inputs.tg_directory }}/.terragrunt-cache
+        key: ${{ steps.cache-key.outputs.CACHE_KEY }}
+
+
