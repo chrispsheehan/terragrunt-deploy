@@ -33,7 +33,7 @@ jobs:
 
   oidc-cache:
     needs: oidc
-    if: ${{ needs.oidc.outputs.cache_hit }}
+    if: ${{ needs.oidc.outputs.cache_hit != 'true'}}
     environment:
       name: ${{inputs.environment}}
     runs-on: ubuntu-latest
@@ -66,7 +66,7 @@ jobs:
 
   bucket-cache:
     needs: bucket
-    if: ${{ needs.bucket.outputs.cache_hit }}
+    if: ${{ needs.bucket.outputs.cache_hit != 'true'}}
     environment:
       name: ${{inputs.environment}}
     runs-on: ubuntu-latest
