@@ -97,6 +97,8 @@ jobs:
       - validate
       - create-release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     env:
       TAG: ${{ needs.validate.outputs.tag }}
     if: ${{ needs.validate.outputs.release == 'true' }}
