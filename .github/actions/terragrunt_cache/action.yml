@@ -53,7 +53,9 @@ runs:
       shell: bash
       run: |
         CACHE_KEY=$(just get-cache-key ${{ runner.os }} ${{ inputs.tg_directory }})
-        echo "CACHE_KEY=${HASH_KEY}" >> $GITHUB_OUTPUT
+        echo "CACHE_KEY=${CACHE_KEY}"
+        echo "CACHE_KEY=${CACHE_KEY}" >> $GITHUB_OUTPUT
+        echo "CACHE_KEY=${CACHE_KEY}" >> $GITHUB_ENV
 
     - name: Init Terragrunt
       shell: bash
