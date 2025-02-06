@@ -67,19 +67,13 @@ validate:
 # Terragrunt operation on {{module}} containing terragrunt.hcl
 tg env module op:
     #!/usr/bin/env bash
-    cd {{justfile_directory()}}/infra/live/{{env}}/{{module}} ; terragrunt init
     cd {{justfile_directory()}}/infra/live/{{env}}/{{module}} ; terragrunt {{op}}
 
 
-PROJECT_DIR := justfile_directory()
-
-clean-terragrunt-cache:
-    @echo "Cleaning up .terraform directories in {{PROJECT_DIR}}..."
-    find {{PROJECT_DIR}} -type d -name ".terraform" -exec rm -rf {} +
-    @echo "Cleaning up .terraform.lock.hcl files in {{PROJECT_DIR}}..."
-    find {{PROJECT_DIR}} -type f -name ".terraform.lock.hcl" -exec rm -f {} +
-    @echo "Clearing Terragrunt cache..."
-    rm -rf ~/.terragrunt
+tg-all op:
+    #!/usr/bin/env bash
+    cd {{justfile_directory()}}/infra/live 
+    terragrunt run-all {{op}}
 
 
 init env:
@@ -93,3 +87,14 @@ setup:
     #!/usr/bin/env bash
     export TF_VAR_git_token=$(just get-git-token)
     just tg ci github/repo apply
+
+
+PROJECT_DIR := justfile_directory()
+
+clean-terragrunt-cache:
+    @echo "Cleaning up .terraform directories in {{PROJECT_DIR}}..."
+    find {{PROJECT_DIR}} -type d -name ".terraform" -exec rm -rf {} +
+    @echo "Cleaning up .terraform.lock.hcl files in {{PROJECT_DIR}}..."
+    find {{PROJECT_DIR}} -type f -name ".terraform.lock.hcl" -exec rm -f {} +
+    @echo "Clearing Terragrunt cache..."
+    rm -rf ~/.terragrunt
