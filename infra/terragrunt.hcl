@@ -1,7 +1,8 @@
 locals {
-  aws_account_id = get_env("AWS_ACCOUNT_ID", "")
-  git_repo       = get_env("GIT_REPO", "")
   git_token      = get_env("GITHUB_TOKEN", "")
+  git_remote     = run_cmd("--terragrunt-quiet", "git", "remote", "get-url", "origin")
+  git_repo       = regex("[/:]([-0-9_A-Za-z]*/[-0-9_A-Za-z]*)[^/]*$", local.git_remote)[0]
+  aws_account_id = get_aws_account_id()
 
   path_parts  = split("/", get_terragrunt_dir())
   module      = local.path_parts[length(local.path_parts) - 1]

@@ -58,8 +58,6 @@ validate:
 # Terragrunt operation on {{module}} containing terragrunt.hcl
 tg env module op:
     #!/usr/bin/env bash
-    export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
-    export GIT_REPO=$(just get-git-repo)
     cd {{justfile_directory()}}/infra/live/{{env}}/{{module}} ; terragrunt init
     cd {{justfile_directory()}}/infra/live/{{env}}/{{module}} ; terragrunt {{op}}
 
