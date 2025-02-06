@@ -21,7 +21,7 @@ locals {
 
 terraform {
   before_hook "print_locals" {
-    commands = ["init", "plan", "apply"]
+    commands = ["init"]
     execute = [
       "bash", "-c", "echo STATE:${local.state_bucket}/${local.state_key} TABLE:${local.state_lock_table}"
     ]
