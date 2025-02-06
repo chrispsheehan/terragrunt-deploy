@@ -57,11 +57,9 @@ runs:
         export TF_CACHE_DIR=${{ inputs.tg_directory }}/.terragrunt-cache
         echo "TF_CACHE_DIR=${TF_CACHE_DIR}" >> $GITHUB_ENV
 
-        export TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache"
+        export TF_PLUGIN_CACHE_DIR="${{ inputs.tg_directory }}/.terraform.d/plugin-cache"
         echo "TF_PLUGIN_CACHE_DIR=${TF_PLUGIN_CACHE_DIR}" >> $GITHUB_ENV
-
-        mkdir -p "$TF_PLUGIN_CACHE_DIR"
-        echo "plugin_cache_dir = \"$TF_PLUGIN_CACHE_DIR\"" > ~/.terraformrc
+        mkdir -p "${TF_PLUGIN_CACHE_DIR}"
 
     - name: Determine Cache Key
       id: cache-key
