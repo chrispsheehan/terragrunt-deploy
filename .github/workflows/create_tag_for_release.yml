@@ -102,6 +102,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      actions: write
     env:
       TAG: ${{ needs.validate.outputs.tag }}
     if: ${{ needs.validate.outputs.release == 'true' }}
