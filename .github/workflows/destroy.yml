@@ -9,6 +9,9 @@ concurrency: # only run one instance of workflow at any one time
   group: ${{ github.workflow }}-${{inputs.environment}}
   cancel-in-progress: false
 
+env:
+  TF_VAR_git_token: ${{ secrets.GIT_TOKEN }}
+
 permissions:
     id-token: write
     contents: read

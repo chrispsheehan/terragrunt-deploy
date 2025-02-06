@@ -23,6 +23,15 @@ get-git-repo:
     echo "$repo_name"
 
 
+get-git-token:
+    #!/usr/bin/env bash
+    if ! gh auth status &> /dev/null; then
+        gh auth login
+    fi
+    GITHUB_TOKEN=$(gh auth token 2>/dev/null)
+    echo $GITHUB_TOKEN
+
+
 branch name:
     #!/usr/bin/env bash
     git checkout main
@@ -75,20 +84,12 @@ clean-terragrunt-cache:
 
 init env:
     #!/usr/bin/env bash
-    if ! gh auth status &> /dev/null; then
-        gh auth login
-    fi
-    GITHUB_TOKEN=$(gh auth token 2>/dev/null)
-    export GITHUB_TOKEN
+    export TF_VAR_git_token=$(just get-git-token)
     just tg {{env}} aws/oidc apply
     just tg {{env}} github/environment apply
 
 
 setup:
     #!/usr/bin/env bash
-    if ! gh auth status &> /dev/null; then
-        gh auth login
-    fi
-    GITHUB_TOKEN=$(gh auth token 2>/dev/null)
-    export GITHUB_TOKEN
+    export TF_VAR_git_token=$(just get-git-token)
     just tg ci github/repo apply

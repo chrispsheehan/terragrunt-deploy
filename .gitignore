@@ -1,7 +1,6 @@
 .env
 *.terragrunt-cache
 *.terraform
-*.lock.hcl
 *-debug.tfvars.json
 
 # ignore generated files
