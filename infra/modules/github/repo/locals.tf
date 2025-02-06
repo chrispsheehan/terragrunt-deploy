@@ -6,7 +6,7 @@ locals {
     "aws-actions/configure-aws-credentials@*",
     "extractions/setup-just@*",
     "hashicorp/setup-terraform@*",
-    "autero1/action-terragrunt@*"
+    "autero1/action-terragrunt@*",
     "softprops/action-gh-release@*"
   ]
 }
