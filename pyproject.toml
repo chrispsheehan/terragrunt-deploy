@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "terragrunt-deploy"
-version = "0.0.1"
+version = "0.0.2"
 description = ""
 authors = ["@chrispsheehan"]
 readme = "README.md"
