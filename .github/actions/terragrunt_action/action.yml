@@ -51,6 +51,14 @@ runs:
         role-to-assume: ${{ inputs.aws_oidc_role_arn }}
         aws-region: ${{ inputs.aws_region }}
 
+    - name: Set up Terraform Cache vars
+      shell: bash
+      run: |
+        export TF_CACHE_DIR=${{ inputs.tg_directory }}/.terragrunt-cache
+        export TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache"
+        mkdir -p "$TF_PLUGIN_CACHE_DIR"
+        echo "plugin_cache_dir = \"$TF_PLUGIN_CACHE_DIR\"" > ~/.terraformrc
+
     - name: Determine Cache Key
       id: cache-key
       shell: bash
@@ -65,8 +73,8 @@ runs:
       uses: actions/cache@v3
       with:
         path: |
-          ~/.terraform.d/plugin-cache
-          ${{ inputs.tg_directory }}/.terragrunt-cache
+          ${{ env.TF_CACHE_DIR }}
+          ${{ env.TF_PLUGIN_CACHE_DIR }}
         key: ${{ steps.cache-key.outputs.CACHE_KEY }}
         restore-keys: terraform-${{ runner.os }}-
 
