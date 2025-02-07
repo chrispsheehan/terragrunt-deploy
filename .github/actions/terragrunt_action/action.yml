@@ -57,7 +57,7 @@ runs:
         export TF_CACHE_DIR="${{ github.workspace }}/${{ inputs.tg_directory }}/.terragrunt-cache"
         echo "TF_CACHE_DIR=${TF_CACHE_DIR}" >> $GITHUB_ENV
 
-        export TF_PLUGIN_CACHE_DIR="${{ github.workspace }}/.terraform.d/plugin-cache"
+        export TF_PLUGIN_CACHE_DIR="${{ github.workspace }}/${{ inputs.tg_directory }}/.plugin-cache"
         echo "TF_PLUGIN_CACHE_DIR=${TF_PLUGIN_CACHE_DIR}" >> $GITHUB_ENV
         mkdir -p "${TF_PLUGIN_CACHE_DIR}"
 
@@ -95,12 +95,18 @@ runs:
       run: |
         ls -a
         terragrunt init
-        ls ${{ env.TF_PLUGIN_CACHE_DIR }} -a
- 
-    - name: Action Terragrunt
+
+    - name: debug
+      # if: steps.cache-restore.outputs.cache-hit != 'true'
       shell: bash
       working-directory: ${{ inputs.tg_directory }}
       run: |
-        ls -a
-        terragrunt ${{ inputs.tg_action }} -auto-approve -compact-warnings --terragrunt-no-auto-init
+        ls ${{ env.TF_PLUGIN_CACHE_DIR }} -a
+ 
+    # - name: Action Terragrunt
+    #   shell: bash
+    #   working-directory: ${{ inputs.tg_directory }}
+    #   run: |
+    #     ls -a
+    #     terragrunt ${{ inputs.tg_action }} -auto-approve -compact-warnings --terragrunt-no-auto-init
 
