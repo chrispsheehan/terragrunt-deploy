@@ -86,16 +86,29 @@ runs:
         echo "Cache Hit: ${{ steps.cache-restore.outputs.cache-hit }}"
         echo "CACHE_HIT=${{ steps.cache-restore.outputs.cache-hit }}" >> $GITHUB_ENV
 
-    - name: Init Terragrunt
-      if: steps.cache-restore.outputs.cache-hit != 'true'
+    - name: TF_CACHE_DIR
       shell: bash
-      env:
-        TF_LOG: TRACE
       working-directory: ${{ inputs.tg_directory }}
       run: |
-        ls ${{ env.TF_CACHE_DIR }} -a
         ls ${{ env.TF_PLUGIN_CACHE_DIR }} -a
-        terragrunt init
+ 
+    - name: TF_PLUGIN_CACHE_DIR
+      shell: bash
+      working-directory: ${{ inputs.tg_directory }}
+      run: |
+        ls ${{ env.TF_PLUGIN_CACHE_DIR }} -a
+
+
+    # - name: Init Terragrunt
+    #   if: steps.cache-restore.outputs.cache-hit != 'true'
+    #   shell: bash
+    #   env:
+    #     TF_LOG: TRACE
+    #   working-directory: ${{ inputs.tg_directory }}
+    #   run: |
+    #     ls ${{ env.TF_CACHE_DIR }} -a
+    #     ls ${{ env.TF_PLUGIN_CACHE_DIR }} -a
+    #     terragrunt init
  
     # - name: Action Terragrunt
     #   shell: bash
