@@ -99,16 +99,16 @@ runs:
         ls ${{ env.TF_PLUGIN_CACHE_DIR }}/registry.terraform.io -a
 
 
-    # - name: Init Terragrunt
-    #   if: steps.cache-restore.outputs.cache-hit != 'true'
-    #   shell: bash
-    #   env:
-    #     TF_LOG: TRACE
-    #   working-directory: ${{ inputs.tg_directory }}
-    #   run: |
-    #     ls ${{ env.TF_CACHE_DIR }} -a
-    #     ls ${{ env.TF_PLUGIN_CACHE_DIR }} -a
-    #     terragrunt init
+    - name: Init Terragrunt
+      if: steps.cache-restore.outputs.cache-hit != 'true'
+      shell: bash
+      env:
+        TF_LOG: TRACE
+      working-directory: ${{ inputs.tg_directory }}
+      run: |
+        ls ${{ env.TF_CACHE_DIR }} -a
+        ls ${{ env.TF_PLUGIN_CACHE_DIR }} -a
+        terragrunt init
  
     # - name: Action Terragrunt
     #   shell: bash
