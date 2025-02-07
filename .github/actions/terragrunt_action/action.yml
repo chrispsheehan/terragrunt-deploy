@@ -85,6 +85,13 @@ runs:
       shell: bash
       run: |
         echo "🔍 Searching for Terraform state files before deletion..."
+
+        if [[ ! -d "${{ env.TF_CACHE_DIR }}" ]]; then
+          echo "Terraform cache directory does not exist. Skipping state file check."
+          echo "state_count=0" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
+
         STATE_FILES=$(find ${{ env.TF_CACHE_DIR }} -type f -name "terraform.tfstate*")
         
         if [[ -z "$STATE_FILES" ]]; then
@@ -129,4 +136,3 @@ runs:
         echo "$STATE_FILES"
         echo "$STATE_FILES" | xargs rm -f
         echo "✅ Terraform state files deleted successfully."
-
