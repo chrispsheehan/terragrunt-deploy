@@ -93,6 +93,7 @@ runs:
         else
           echo "$STATE_FILES"
           echo "state_count=$(echo "$STATE_FILES" | wc -l)" >> "$GITHUB_OUTPUT"
+          echo "state_files=$STATE_FILES" >> "$GITHUB_OUTPUT"
         fi
 
     - name: Delete Terraform State Files (If Found)
@@ -100,7 +101,7 @@ runs:
       shell: bash
       run: |
         echo "🚨 Deleting Terraform state files..."
-        STATE_FILES=${{ steps.check_state_files.outputs.state_count }}
+        STATE_FILES=${{ steps.check_state_files.outputs.state_files }}
 
         echo "Files to be deleted:"
         echo "$STATE_FILES"
