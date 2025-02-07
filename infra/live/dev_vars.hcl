@@ -4,7 +4,7 @@ locals {
 
   deploy_branches = [
     "feature/temp-debug-branch", # example additional branch to deploy from
-    "cache-flow-improvements",
+    "cache-plugins",
     local.default_branch
   ]
 }
