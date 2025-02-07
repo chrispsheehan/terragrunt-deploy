@@ -82,44 +82,41 @@ runs:
 
     - name: List Terraform State Files (Before Deletion)
       shell: bash
-      run: find ${{ env.TF_CACHE_DIR }} -type f -name "terraform.tfstate*" | tee /dev/stderr
+      run: |
+        echo "🔍 Searching for Terraform state files before deletion..."
+        STATE_FILES=$(find ${{ env.TF_CACHE_DIR }} -type f -name "terraform.tfstate*")
+        
+        if [[ -z "$STATE_FILES" ]]; then
+          echo "✅ No Terraform state files found."
+        else
+          echo "$STATE_FILES"
+        fi
 
-    - name: Delete Terrafrom state files
+    - name: Delete Terraform State Files (If Found)
       shell: bash
-      run: find ${{ env.TF_CACHE_DIR }} -type f -name "terraform.tfstate*" -delete || true
+      if: ${{ success() }}
+      run: |
+        echo "🚨 Deleting Terraform state files..."
+        STATE_FILES=$(find ${{ env.TF_CACHE_DIR }} -type f -name "terraform.tfstate*")
+
+        if [[ -n "$STATE_FILES" ]]; then
+          echo "Files to be deleted:"
+          echo "$STATE_FILES"
+          echo "$STATE_FILES" | xargs rm -f
+          echo "✅ Terraform state files deleted successfully."
+        else
+          echo "✅ No Terraform state files found, skipping deletion."
+        fi
+
 
     - name: Cache Hit Output
       shell: bash
       run: |
         echo "Cache Hit: ${{ steps.cache-restore.outputs.cache-hit }}"
         echo "CACHE_HIT=${{ steps.cache-restore.outputs.cache-hit }}" >> $GITHUB_ENV
-
-    - name: TF_CACHE_DIR
-      shell: bash
-      working-directory: ${{ inputs.tg_directory }}
-      run: |
-        ls ${{ env.TF_CACHE_DIR }} -a -R
- 
-    - name: TF_PLUGIN_CACHE_DIR
-      shell: bash
-      working-directory: ${{ inputs.tg_directory }}
-      run: |
-        ls ${{ env.TF_PLUGIN_CACHE_DIR }}/registry.terraform.io -a
-
-
-    # - name: Init Terragrunt
-    #   # if: steps.cache-restore.outputs.cache-hit != 'true'
-    #   shell: bash
-    #   env:
-    #     TF_LOG: TRACE
-    #   working-directory: ${{ inputs.tg_directory }}
-    #   run: |
-    #     terraform init -reconfigure
  
     - name: Action Terragrunt
       shell: bash
-      env:
-        TF_LOG: TRACE
       working-directory: ${{ inputs.tg_directory }}
       run: |
         terragrunt ${{ inputs.tg_action }} -auto-approve -compact-warnings
