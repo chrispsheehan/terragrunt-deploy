@@ -108,7 +108,6 @@ runs:
         echo "$STATE_FILES" | xargs rm -f
         echo "✅ Terraform state files deleted successfully."
 
-
     - name: Cache Hit Output
       shell: bash
       run: |
@@ -121,7 +120,13 @@ runs:
       run: |
         terragrunt ${{ inputs.tg_action }} -auto-approve -compact-warnings
 
-    - name: Remove Backend State Files
+    - name: Delete Terraform State Files
       shell: bash
-      run: rm -f ${{ env.TF_CACHE_DIR }}/terraform.tfstate* || true
+      run: |
+        STATE_FILES=$(find ${{ env.TF_CACHE_DIR }} -type f -name "terraform.tfstate*")
+
+        echo "Files to be deleted:"
+        echo "$STATE_FILES"
+        echo "$STATE_FILES" | xargs rm -f
+        echo "✅ Terraform state files deleted successfully."
 
