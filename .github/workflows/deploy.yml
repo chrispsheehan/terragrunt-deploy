@@ -13,21 +13,7 @@ env:
   TF_VAR_git_token: ${{ secrets.GIT_TOKEN }}
 
 jobs:
-  repo:
-    environment:
-      name: ${{inputs.environment}} # uses the environment containing the env vars (vars.) used in the below action
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/terragrunt_action
-        with:
-          aws_oidc_role_arn: ${{ vars.AWS_OIDC_ROLE_ARN }}
-          aws_region: ${{ vars.AWS_REGION }}
-          tg_directory: infra/live/ci/github/repo
-          tg_action: apply
-
   oidc:
-    needs: repo
     environment:
       name: ${{inputs.environment}} # uses the environment containing the env vars (vars.) used in the below action
     runs-on: ubuntu-latest
