@@ -66,7 +66,6 @@ runs:
       run: |
         echo 'plugin_cache_dir = "${TF_PLUGIN_CACHE_DIR}"' > $HOME/.terraformrc
 
-
     - name: Determine Cache Key
       id: cache-key
       shell: bash
@@ -85,6 +84,20 @@ runs:
           ${{ env.TF_PLUGIN_CACHE_DIR }}
         key: ${{ steps.cache-key.outputs.CACHE_KEY }}
         restore-keys: terraform-${{ runner.os }}-
+
+
+    - name: Debug Terraform Plugin Cache Path
+      shell: bash
+      run: |
+        echo "🔍 Checking Terraform Plugin Cache Path..."
+        terraform providers mirror --help | grep "Plugin directory" || echo "⚠️ No explicit plugin directory found."
+
+        echo "🔍 Checking TF_PLUGIN_CACHE_DIR Environment Variable..."
+        echo "TF_PLUGIN_CACHE_DIR is set to: ${{ env.TF_PLUGIN_CACHE_DIR }}"
+
+        echo "🔍 Checking Plugin Cache Directory Contents..."
+        ls -lah ${{ env.TF_PLUGIN_CACHE_DIR }} || echo "⚠️ Plugin cache directory is empty."
+
 
     - name: List Terraform State Files (Before Deletion)
       id: check_state_files
