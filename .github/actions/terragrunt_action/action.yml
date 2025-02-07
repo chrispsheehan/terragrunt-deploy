@@ -51,44 +51,46 @@ runs:
         role-to-assume: ${{ inputs.aws_oidc_role_arn }}
         aws-region: ${{ inputs.aws_region }}
 
-    - name: Set up Terraform Cache vars
-      shell: bash
-      run: |
-        export TF_CACHE_DIR=${{ inputs.tg_directory }}/.terragrunt-cache
-        echo "TF_CACHE_DIR=${TF_CACHE_DIR}" >> $GITHUB_ENV
+    # - name: Set up Terraform Cache vars
+    #   shell: bash
+    #   run: |
+    #     export TF_CACHE_DIR=${{ inputs.tg_directory }}/.terragrunt-cache
+    #     echo "TF_CACHE_DIR=${TF_CACHE_DIR}" >> $GITHUB_ENV
 
-        export TF_PLUGIN_CACHE_DIR="${{ inputs.tg_directory }}/.terraform.d/plugin-cache"
-        echo "TF_PLUGIN_CACHE_DIR=${TF_PLUGIN_CACHE_DIR}" >> $GITHUB_ENV
-        mkdir -p "${TF_PLUGIN_CACHE_DIR}"
+    #     export TF_PLUGIN_CACHE_DIR="${{ inputs.tg_directory }}/.terraform.d/plugin-cache"
+    #     echo "TF_PLUGIN_CACHE_DIR=${TF_PLUGIN_CACHE_DIR}" >> $GITHUB_ENV
+    #     mkdir -p "${TF_PLUGIN_CACHE_DIR}"
 
-    - name: Determine Cache Key
-      id: cache-key
-      shell: bash
-      run: |
-        CACHE_KEY=$(just get-cache-key ${{ runner.os }} ${{ inputs.tg_directory }})
-        echo "CACHE_KEY=${CACHE_KEY}"
-        echo "CACHE_KEY=${CACHE_KEY}" >> $GITHUB_OUTPUT
-        echo "CACHE_KEY=${CACHE_KEY}" >> $GITHUB_ENV
+    # - name: Determine Cache Key
+    #   id: cache-key
+    #   shell: bash
+    #   run: |
+    #     CACHE_KEY=$(just get-cache-key ${{ runner.os }} ${{ inputs.tg_directory }})
+    #     echo "CACHE_KEY=${CACHE_KEY}"
+    #     echo "CACHE_KEY=${CACHE_KEY}" >> $GITHUB_OUTPUT
+    #     echo "CACHE_KEY=${CACHE_KEY}" >> $GITHUB_ENV
 
-    - name: Restore Terraform Cache
-      id: cache-restore
-      uses: actions/cache@v3
-      with:
-        path: |
-          ${{ env.TF_CACHE_DIR }}
-          ${{ env.TF_PLUGIN_CACHE_DIR }}
-        key: ${{ steps.cache-key.outputs.CACHE_KEY }}
-        restore-keys: terraform-${{ runner.os }}-
+    # - name: Restore Terraform Cache
+    #   id: cache-restore
+    #   uses: actions/cache@v3
+    #   with:
+    #     path: |
+    #       ${{ env.TF_CACHE_DIR }}
+    #       ${{ env.TF_PLUGIN_CACHE_DIR }}
+    #     key: ${{ steps.cache-key.outputs.CACHE_KEY }}
+    #     restore-keys: terraform-${{ runner.os }}-
 
-    - name: Cache Hit Output
-      shell: bash
-      run: |
-        echo "Cache Hit: ${{ steps.cache-restore.outputs.cache-hit }}"
-        echo "CACHE_HIT=${{ steps.cache-restore.outputs.cache-hit }}" >> $GITHUB_ENV
+    # - name: Cache Hit Output
+    #   shell: bash
+    #   run: |
+    #     echo "Cache Hit: ${{ steps.cache-restore.outputs.cache-hit }}"
+    #     echo "CACHE_HIT=${{ steps.cache-restore.outputs.cache-hit }}" >> $GITHUB_ENV
 
     - name: Init Terragrunt
-      if: steps.cache-restore.outputs.cache-hit != 'true'
+      # if: steps.cache-restore.outputs.cache-hit != 'true'
       shell: bash
+      env:
+        TF_LOG: TRACE
       working-directory: ${{ inputs.tg_directory }}
       run: |
         ls -a

@@ -26,16 +26,16 @@ jobs:
           tg_directory: infra/live/${{inputs.environment}}/aws/oidc
           tg_action: apply
 
-  bucket:
-    needs: oidc
-    environment:
-      name: ${{inputs.environment}}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/terragrunt_action
-        with:
-          aws_oidc_role_arn: ${{ vars.AWS_OIDC_ROLE_ARN }}
-          aws_region: ${{ vars.AWS_REGION }}
-          tg_directory: infra/live/${{inputs.environment}}/aws/bucket
-          tg_action: apply
+  # bucket:
+  #   needs: oidc
+  #   environment:
+  #     name: ${{inputs.environment}}
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: ./.github/actions/terragrunt_action
+  #       with:
+  #         aws_oidc_role_arn: ${{ vars.AWS_OIDC_ROLE_ARN }}
+  #         aws_region: ${{ vars.AWS_REGION }}
+  #         tg_directory: infra/live/${{inputs.environment}}/aws/bucket
+  #         tg_action: apply
