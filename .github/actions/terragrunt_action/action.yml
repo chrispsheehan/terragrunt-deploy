@@ -81,6 +81,7 @@ runs:
         restore-keys: terraform-${{ runner.os }}-
 
     - name: List Terraform State Files (Before Deletion)
+      id: check_state_files
       shell: bash
       run: |
         echo "🔍 Searching for Terraform state files before deletion..."
@@ -88,25 +89,23 @@ runs:
         
         if [[ -z "$STATE_FILES" ]]; then
           echo "✅ No Terraform state files found."
+          echo "state_count=0" >> "$GITHUB_OUTPUT"
         else
           echo "$STATE_FILES"
+          echo "state_count=$(echo "$STATE_FILES" | wc -l)" >> "$GITHUB_OUTPUT"
         fi
 
     - name: Delete Terraform State Files (If Found)
+      if: ${{ steps.check_state_files.outputs.state_count > 0 }}
       shell: bash
-      if: ${{ success() }}
       run: |
         echo "🚨 Deleting Terraform state files..."
-        STATE_FILES=$(find ${{ env.TF_CACHE_DIR }} -type f -name "terraform.tfstate*")
+        STATE_FILES=${{ steps.check_state_files.outputs.state_count }}
 
-        if [[ -n "$STATE_FILES" ]]; then
-          echo "Files to be deleted:"
-          echo "$STATE_FILES"
-          echo "$STATE_FILES" | xargs rm -f
-          echo "✅ Terraform state files deleted successfully."
-        else
-          echo "✅ No Terraform state files found, skipping deletion."
-        fi
+        echo "Files to be deleted:"
+        echo "$STATE_FILES"
+        echo "$STATE_FILES" | xargs rm -f
+        echo "✅ Terraform state files deleted successfully."
 
 
     - name: Cache Hit Output
