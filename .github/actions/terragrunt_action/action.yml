@@ -66,11 +66,6 @@ runs:
         echo "TERRAGRUNT_PROVIDER_CACHE_DIR=${TERRAGRUNT_PROVIDER_CACHE_DIR}" >> $GITHUB_ENV
         mkdir -p "${TERRAGRUNT_PROVIDER_CACHE_DIR}"
 
-    - name: Configure Terraform Plugin Cache
-      shell: bash
-      run: |
-        echo 'plugin_cache_dir = "${TF_PLUGIN_CACHE_DIR}"' > $HOME/.terraformrc
-
     - name: Determine Cache Key
       id: cache-key
       shell: bash
@@ -137,7 +132,6 @@ runs:
           --terragrunt-provider-cache \
           --terragrunt-provider-cache-dir "${TERRAGRUNT_PROVIDER_CACHE_DIR}" \
           -auto-approve -compact-warnings
-
 
     - name: Delete Terraform State Files
       shell: bash
