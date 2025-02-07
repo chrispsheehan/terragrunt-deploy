@@ -56,10 +56,15 @@ runs:
       run: |
         export TF_CACHE_DIR="${{ github.workspace }}/${{ inputs.tg_directory }}/.terragrunt-cache"
         echo "TF_CACHE_DIR=${TF_CACHE_DIR}" >> $GITHUB_ENV
+        mkdir -p "${TF_CACHE_DIR}"
 
         export TF_PLUGIN_CACHE_DIR="${{ github.workspace }}/${{ inputs.tg_directory }}/.plugin-cache"
         echo "TF_PLUGIN_CACHE_DIR=${TF_PLUGIN_CACHE_DIR}" >> $GITHUB_ENV
         mkdir -p "${TF_PLUGIN_CACHE_DIR}"
+
+        export TERRAGRUNT_PROVIDER_CACHE_DIR="${{ github.workspace }}/.terragrunt-provider-cache"
+        echo "TERRAGRUNT_PROVIDER_CACHE_DIR=${TERRAGRUNT_PROVIDER_CACHE_DIR}" >> $GITHUB_ENV
+        mkdir -p "${TERRAGRUNT_PROVIDER_CACHE_DIR}"
 
     - name: Configure Terraform Plugin Cache
       shell: bash
@@ -84,20 +89,6 @@ runs:
           ${{ env.TF_PLUGIN_CACHE_DIR }}
         key: ${{ steps.cache-key.outputs.CACHE_KEY }}
         restore-keys: terraform-${{ runner.os }}-
-
-
-    - name: Debug Terraform Plugin Cache Path
-      shell: bash
-      run: |
-        echo "🔍 Checking Terraform Plugin Cache Path..."
-        terraform providers mirror --help | grep "Plugin directory" || echo "⚠️ No explicit plugin directory found."
-
-        echo "🔍 Checking TF_PLUGIN_CACHE_DIR Environment Variable..."
-        echo "TF_PLUGIN_CACHE_DIR is set to: ${{ env.TF_PLUGIN_CACHE_DIR }}"
-
-        echo "🔍 Checking Plugin Cache Directory Contents..."
-        ls -lah ${{ env.TF_PLUGIN_CACHE_DIR }} || echo "⚠️ Plugin cache directory is empty."
-
 
     - name: List Terraform State Files (Before Deletion)
       id: check_state_files
@@ -142,7 +133,11 @@ runs:
       shell: bash
       working-directory: ${{ inputs.tg_directory }}
       run: |
-        terragrunt ${{ inputs.tg_action }} -auto-approve -compact-warnings
+        terragrunt ${{ inputs.tg_action }} \
+          --terragrunt-provider-cache \
+          --terragrunt-provider-cache-dir "${TERRAGRUNT_PROVIDER_CACHE_DIR}" \
+          -auto-approve -compact-warnings
+
 
     - name: Delete Terraform State Files
       shell: bash
