@@ -89,18 +89,16 @@ runs:
         if [[ ! -d "${{ env.TF_CACHE_DIR }}" ]]; then
           echo "Terraform cache directory does not exist. Skipping state file check."
           echo "state_count=0" >> "$GITHUB_OUTPUT"
-          exit 0
-        fi
-
-        STATE_FILES=$(find ${{ env.TF_CACHE_DIR }} -type f -name "terraform.tfstate*")
-        
-        if [[ -z "$STATE_FILES" ]]; then
-          echo "✅ No Terraform state files found."
-          echo "state_count=0" >> "$GITHUB_OUTPUT"
         else
-          echo "$STATE_FILES"
-          echo "state_count=$(echo "$STATE_FILES" | wc -l)" >> "$GITHUB_OUTPUT"
-          echo "state_files=$STATE_FILES" >> "$GITHUB_OUTPUT"
+          STATE_FILES=$(find ${{ env.TF_CACHE_DIR }} -type f -name "terraform.tfstate*")
+          if [[ -z "$STATE_FILES" ]]; then
+            echo "✅ No Terraform state files found."
+            echo "state_count=0" >> "$GITHUB_OUTPUT"
+          else
+            echo "$STATE_FILES"
+            echo "state_count=$(echo "$STATE_FILES" | wc -l)" >> "$GITHUB_OUTPUT"
+            echo "state_files=$STATE_FILES" >> "$GITHUB_OUTPUT"
+          fi
         fi
 
     - name: Delete Terraform State Files (If Found)
