@@ -12,7 +12,7 @@ inputs:
   tg_version:
     description: "Version of Terragrunt to install"
     required: false
-    default: "0.51.5"
+    default: "0.72.6"
   aws_oidc_role_arn:
     description: "AWS OIDC Role to assume"
     required: true
