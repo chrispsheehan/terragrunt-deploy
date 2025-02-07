@@ -80,9 +80,13 @@ runs:
         key: ${{ steps.cache-key.outputs.CACHE_KEY }}
         restore-keys: terraform-${{ runner.os }}-
 
-    - name: Remove Backend State Files
+    - name: List Terraform State Files (Before Deletion)
       shell: bash
-      run: rm -f ${{ env.TF_CACHE_DIR }}/terraform.tfstate* || true
+      run: find ${{ env.TF_CACHE_DIR }} -type f -name "terraform.tfstate*" | tee /dev/stderr
+
+    - name: Delete Terrafrom state files
+      shell: bash
+      run: find ${{ env.TF_CACHE_DIR }} -type f -name "terraform.tfstate*" -delete || true
 
     - name: Cache Hit Output
       shell: bash
