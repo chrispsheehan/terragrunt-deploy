@@ -1,7 +1,7 @@
 resource "aws_iam_role" "this" {
   name               = var.deploy_role_name
   description        = "OIDC role to deploy terragrunt code in Github pipelines"
-  assume_role_policy = data.aws_iam_policy_document.github_actions.json
+  assume_role_policy = data.aws_iam_policy_document.github_assume_actions.json
 }
 
 resource "aws_iam_role_policy_attachment" "terraform_actions" {

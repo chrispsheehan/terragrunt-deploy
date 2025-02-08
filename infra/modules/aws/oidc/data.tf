@@ -4,14 +4,14 @@ data "aws_iam_openid_connect_provider" "this" {
 
 data "aws_iam_policy_document" "terraform_actions" {
   statement {
-    actions   = concat(local.oidc_actions, var.oidc_role_actions)
+    actions   = var.oidc_role_actions
     resources = var.oidc_resources
   }
 }
 
-data "aws_iam_policy_document" "github_actions" {
+data "aws_iam_policy_document" "github_assume_actions" {
   statement {
-    actions = local.oidc_actions
+    actions = local.oidc_assume_actions
 
     principals {
       type        = "Federated"
@@ -44,21 +44,21 @@ data "aws_dynamodb_table" "tf_lock_table" {
 
 data "aws_iam_policy_document" "terraform_state" {
   statement {
-    actions = local.oidc_actions
+    actions = local.oidc_assume_actions
     resources = [
       "*"
     ]
   }
 
   statement {
-    actions = local.iam_actions
+    actions = local.iam_assume_actions
     resources = [
       "*"
     ]
   }
 
   statement {
-    actions = local.s3_actions
+    actions = local.s3_state_actions
     resources = [
       "${data.aws_s3_bucket.tf_state_bucket.arn}",
       "${data.aws_s3_bucket.tf_state_bucket.arn}/*"
@@ -66,7 +66,7 @@ data "aws_iam_policy_document" "terraform_state" {
   }
 
   statement {
-    actions = local.dyanamodb_actions
+    actions = local.dyanamodb_state_actions
     resources = [
       data.aws_dynamodb_table.tf_lock_table.arn
     ]

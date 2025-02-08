@@ -5,11 +5,11 @@ locals {
   repo_deployments  = var.allow_deployments ? [format("repo:%s:deployment", var.github_repo)] : []
   repo_subjects     = concat(local.repo_branch_refs, local.repo_tag_refs, local.repo_environments, local.repo_deployments)
   oidc_domain       = "token.actions.githubusercontent.com"
-  oidc_actions = [
+  oidc_assume_actions = [
     "sts:AssumeRoleWithWebIdentity",
     "sts:TagSession"
   ]
-  s3_actions = [
+  s3_state_actions = [
     "s3:ListBucket",
     "s3:GetBucketLocation",
     "s3:GetBucketPolicy",
@@ -20,7 +20,7 @@ locals {
     "s3:PutObject",
     "s3:DeleteObject",
   ]
-  dyanamodb_actions = [
+  dyanamodb_state_actions = [
     "dynamodb:ListTables",
     "dynamodb:DescribeTable",
     "dynamodb:GetItem",
@@ -30,7 +30,7 @@ locals {
     "dynamodb:DescribeTimeToLive",
     "dynamodb:ListTagsOfResource"
   ]
-  iam_actions = [
+  iam_assume_actions = [
     "iam:GetOpenIDConnectProvider",
     "iam:GetRole",
     "iam:GetPolicy",
