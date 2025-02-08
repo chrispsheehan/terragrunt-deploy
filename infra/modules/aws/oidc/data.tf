@@ -2,7 +2,7 @@ data "aws_iam_openid_connect_provider" "this" {
   arn = "arn:aws:iam::${var.aws_account_id}:oidc-provider/${local.oidc_domain}"
 }
 
-data "aws_iam_policy_document" "terraform_defined_actions" {
+data "aws_iam_policy_document" "assume_identity" {
 
   statement {
     sid       = "AllowOIDCRoleAssumeIdentity"
@@ -11,11 +11,27 @@ data "aws_iam_policy_document" "terraform_defined_actions" {
   }
 
   statement {
-    sid       = "DeployOIDCRoleManagementPermissions"
-    actions   = local.oidc_role_management_actions
+    sid       = "AllowReadOIDCProvider"
+    actions   = local.oidc_management_actions
+    resources = [data.aws_iam_openid_connect_provider.this.arn]
+  }
+}
+
+data "aws_iam_policy_document" "role_management" {
+  statement {
+    sid       = "AllowRoleManagementPermissions"
+    actions   = local.role_management_actions
     resources = [aws_iam_role.this.arn]
   }
 
+  statement {
+    sid       = "AllowPolicyManagementPermissions"
+    actions   = local.policy_management_actions
+    resources = [aws_iam_policy.defined.arn]
+  }
+}
+
+data "aws_iam_policy_document" "defined" {
   statement {
     sid       = "AllowDefinedResourcePermissions"
     actions   = var.oidc_role_actions
@@ -23,7 +39,7 @@ data "aws_iam_policy_document" "terraform_defined_actions" {
   }
 }
 
-data "aws_iam_policy_document" "github_assume_actions" {
+data "aws_iam_policy_document" "github_assume_policy" {
   statement {
     actions = local.oidc_assume_actions
     sid = "AllowGitHubOIDCProviderAssume"
@@ -57,7 +73,7 @@ data "aws_dynamodb_table" "tf_lock_table" {
   name = var.state_lock_table
 }
 
-data "aws_iam_policy_document" "terraform_state_management" {
+data "aws_iam_policy_document" "state_management" {
   statement {
     sid = "AllowS3StateManagement"
     actions = local.s3_state_actions

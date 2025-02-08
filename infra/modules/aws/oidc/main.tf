@@ -1,27 +1,49 @@
 resource "aws_iam_role" "this" {
   name               = var.deploy_role_name
-  description        = "OIDC role to deploy terragrunt code in Github pipelines"
-  assume_role_policy = data.aws_iam_policy_document.github_assume_actions.json
+  description        = "OIDC role to manage AWS resources in Github pipelines"
+  assume_role_policy = data.aws_iam_policy_document.github_assume_policy.json
 }
 
-resource "aws_iam_role_policy_attachment" "terrafor_defined_actions" {
+resource "aws_iam_role_policy_attachment" "assume_identity" {
   role       = aws_iam_role.this.name
-  policy_arn = aws_iam_policy.terraform_defined_actions.arn
+  policy_arn = aws_iam_policy.assume_identity.arn
 }
 
-resource "aws_iam_policy" "terraform_defined_actions" {
-  description = "Access to defined resources and actions during deployments"
-  name        = "${var.deploy_role_name}-terragrunt-defined-access-action"
-  policy      = data.aws_iam_policy_document.terraform_defined_actions.json
+resource "aws_iam_policy" "assume_identity" {
+  description = "Assume OIDC role policy for Github Actions"
+  name        = "${var.deploy_role_name}-assume-oidc-role"
+  policy      = data.aws_iam_policy_document.assume_identity.json
 }
 
-resource "aws_iam_role_policy_attachment" "terraform_state" {
+resource "aws_iam_role_policy_attachment" "role_management" {
   role       = aws_iam_role.this.name
-  policy_arn = aws_iam_policy.terraform_state_management.arn
+  policy_arn = aws_iam_policy.role_management.arn
 }
 
-resource "aws_iam_policy" "terraform_state_management" {
+resource "aws_iam_policy" "role_management" {
+  description = "Allow management of OIDC role resources and actions"
+  name        = "${var.deploy_role_name}-oidc-role-management"
+  policy      = data.aws_iam_policy_document.role_management.json
+}
+
+resource "aws_iam_role_policy_attachment" "defined" {
+  role       = aws_iam_role.this.name
+  policy_arn = aws_iam_policy.defined.arn
+}
+
+resource "aws_iam_policy" "defined" {
+  description = "Access to defined resources and actions for Github actions"
+  name        = "${var.deploy_role_name}-defined-access"
+  policy      = data.aws_iam_policy_document.defined.json
+}
+
+resource "aws_iam_role_policy_attachment" "state_management" {
+  role       = aws_iam_role.this.name
+  policy_arn = aws_iam_policy.state_management.arn
+}
+
+resource "aws_iam_policy" "state_management" {
   description = "Access to s3 and dynamodb to allow for state management in ci"
-  name        = "${var.deploy_role_name}-terragrunt-state-management"
-  policy      = data.aws_iam_policy_document.terraform_state_management.json
+  name        = "${var.deploy_role_name}-state-management"
+  policy      = data.aws_iam_policy_document.state_management.json
 }
