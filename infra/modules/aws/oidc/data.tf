@@ -1,3 +1,5 @@
+data "aws_caller_identity" "current" {}
+
 data "aws_iam_openid_connect_provider" "this" {
   arn = "arn:aws:iam::${var.aws_account_id}:oidc-provider/${local.oidc_domain}"
 }
@@ -25,9 +27,14 @@ data "aws_iam_policy_document" "role_management" {
   }
 
   statement {
-    sid       = "AllowPolicyManagementPermissions"
-    actions   = local.policy_management_actions
-    resources = [aws_iam_policy.defined.arn]
+    sid     = "AllowPolicyManagementPermissions"
+    actions = local.policy_management_actions
+    resources = [
+      aws_iam_policy.defined.arn,
+      aws_iam_policy.assume_identity.arn,
+      aws_iam_policy.state_management.arn,
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/${local.role_management_policy_name}"
+    ]
   }
 }
 
@@ -42,7 +49,7 @@ data "aws_iam_policy_document" "defined" {
 data "aws_iam_policy_document" "github_assume_policy" {
   statement {
     actions = local.oidc_assume_actions
-    sid = "AllowGitHubOIDCProviderAssume"
+    sid     = "AllowGitHubOIDCProviderAssume"
 
     principals {
       type        = "Federated"
@@ -75,7 +82,7 @@ data "aws_dynamodb_table" "tf_lock_table" {
 
 data "aws_iam_policy_document" "state_management" {
   statement {
-    sid = "AllowS3StateManagement"
+    sid     = "AllowS3StateManagement"
     actions = local.s3_state_actions
     resources = [
       "${data.aws_s3_bucket.tf_state_bucket.arn}",
@@ -84,7 +91,7 @@ data "aws_iam_policy_document" "state_management" {
   }
 
   statement {
-    sid = "AllowDynamodbLockManagemnt"
+    sid     = "AllowDynamodbLockManagemnt"
     actions = local.dyanamodb_state_actions
     resources = [
       data.aws_dynamodb_table.tf_lock_table.arn
