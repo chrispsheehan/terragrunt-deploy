@@ -39,6 +39,21 @@ remote_state {
   }
 }
 
+generate "provider" {
+  path      = "provider.tf"
+  if_exists = "overwrite_terragrunt"
+  contents  = <<EOF
+provider "aws" {
+  region              = "${local.aws_region}"
+  allowed_account_ids = ["${local.aws_account_id}"]
+}
+
+provider "github" {
+  token = var.git_token
+}
+EOF
+}
+
 inputs = merge(
   local.global_vars.inputs,
   local.environment_vars.inputs,
