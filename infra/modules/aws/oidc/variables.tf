@@ -1,8 +1,3 @@
-variable "aws_region" {
-  description = "Region to which resources will be deployed"
-  type        = string
-}
-
 variable "state_bucket" {
   description = "Name of s3 terragrunt state bucket"
   type        = string
