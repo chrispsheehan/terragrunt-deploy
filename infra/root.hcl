@@ -1,6 +1,6 @@
 locals {
   git_remote     = run_cmd("--terragrunt-quiet", "git", "remote", "get-url", "origin")
-  git_repo       = regex("[/:]([-0-9_A-Za-z]*/[-0-9_A-Za-z]*)[^/]*$", local.git_remote)[0]
+  github_repo    = regex("[/:]([-0-9_A-Za-z]*/[-0-9_A-Za-z]*)[^/]*$", local.git_remote)[0]
   aws_account_id = get_aws_account_id()
 
   path_parts  = split("/", get_terragrunt_dir())
@@ -12,7 +12,7 @@ locals {
   environment_vars = read_terragrunt_config(find_in_parent_folders("${local.environment}_vars.hcl"))
 
   aws_region       = local.global_vars.inputs.aws_region
-  project_name     = replace(local.git_repo, "/", "-")
+  project_name     = replace(local.github_repo, "/", "-")
   deploy_role_name = "${local.project_name}-${local.environment}-github-oidc-role"
   state_bucket     = "${local.aws_account_id}-${local.aws_region}-${local.project_name}-tfstate"
   state_key        = "${local.environment}/${local.provider}/${local.module}/terraform.tfstate"
@@ -47,7 +47,7 @@ inputs = merge(
     project_name     = local.project_name
     environment      = local.environment
     environments     = [local.environment]
-    git_repo         = local.git_repo
+    github_repo      = local.github_repo
     deploy_role_name = local.deploy_role_name
     state_bucket     = local.state_bucket
     state_lock_table = local.state_lock_table
