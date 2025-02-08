@@ -30,8 +30,16 @@ variable "deploy_tags" {
   default     = []
 }
 
-variable "environment" {
-  type = string
+variable "environments" {
+  type        = list(string)
+  description = "The github environments allowed to deploy with this role"
+  default     = []
+}
+
+variable "allow_deployments" {
+  type        = bool
+  description = "Allow github deployments to use role"
+  default     = false
 }
 
 variable "oidc_role_actions" {

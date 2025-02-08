@@ -46,6 +46,7 @@ inputs = merge(
     aws_account_id   = local.aws_account_id
     project_name     = local.project_name
     environment      = local.environment
+    environments     = [local.environment]
     git_repo         = local.git_repo
     deploy_role_name = local.deploy_role_name
     state_bucket     = local.state_bucket
