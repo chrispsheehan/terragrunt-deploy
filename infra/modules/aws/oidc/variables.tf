@@ -3,11 +3,6 @@ variable "aws_region" {
   type        = string
 }
 
-variable "aws_account_id" {
-  description = "Account ID for AWS account"
-  type        = string
-}
-
 variable "state_bucket" {
   description = "Name of s3 terragrunt state bucket"
   type        = string
