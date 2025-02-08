@@ -1,7 +1,7 @@
 data "aws_caller_identity" "current" {}
 
 data "aws_iam_openid_connect_provider" "this" {
-  arn = "arn:aws:iam::${var.aws_account_id}:oidc-provider/${local.oidc_domain}"
+  arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/${local.oidc_domain}"
 }
 
 data "aws_iam_policy_document" "assume_identity" {
