@@ -30,7 +30,7 @@ locals {
     "dynamodb:DescribeTimeToLive",
     "dynamodb:ListTagsOfResource"
   ]
-  iam_assume_actions = [
+  oidc_role_management_actions = [
     "iam:GetOpenIDConnectProvider",
     "iam:GetRole",
     "iam:GetPolicy",
