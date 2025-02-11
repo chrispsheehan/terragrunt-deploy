@@ -64,7 +64,6 @@ EOF
   disable = local.provider != "github"
 }
 
-
 inputs = merge(
   local.global_vars.inputs,
   local.environment_vars.inputs,
