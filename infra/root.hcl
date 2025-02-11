@@ -39,20 +39,31 @@ remote_state {
   }
 }
 
-generate "provider" {
-  path      = "provider.tf"
+generate "aws_provider" {
+  path      = "provider_aws.tf"
   if_exists = "overwrite_terragrunt"
   contents  = <<EOF
 provider "aws" {
+  alias               = "primary"
   region              = "${local.aws_region}"
   allowed_account_ids = ["${local.aws_account_id}"]
 }
+EOF
+  disable = local.provider != "aws"
+}
 
+generate "github_provider" {
+  path      = "provider_github.tf"
+  if_exists = "overwrite_terragrunt"
+  contents  = <<EOF
 provider "github" {
+  alias = "secondary"
   token = var.git_token
 }
 EOF
+  disable = local.provider != "github"
 }
+
 
 inputs = merge(
   local.global_vars.inputs,
