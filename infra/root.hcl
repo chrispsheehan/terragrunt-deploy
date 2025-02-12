@@ -50,12 +50,11 @@ generate "aws_provider" {
   if_exists = "overwrite_terragrunt"
   contents  = <<EOF
 provider "aws" {
-  alias               = "primary"
   region              = "${local.aws_region}"
   allowed_account_ids = ["${local.aws_account_id}"]
 }
 EOF
-  disable = local.provider != "aws"
+  disable   = local.provider != "aws"
 }
 
 generate "github_provider" {
@@ -63,24 +62,23 @@ generate "github_provider" {
   if_exists = "overwrite_terragrunt"
   contents  = <<EOF
 provider "github" {
-  alias = "secondary"
   token = var.git_token
 }
 EOF
-  disable = local.provider != "github"
+  disable   = local.provider != "github"
 }
 
 inputs = merge(
   local.global_vars.inputs,
   local.environment_vars.inputs,
   {
-    aws_account_id   = local.aws_account_id
-    project_name     = local.project_name
-    environment      = local.environment
-    environments     = [local.environment]
-    github_repo      = local.github_repo
-    deploy_role_name = local.deploy_role_name
-    state_bucket     = local.state_bucket
-    state_lock_table = local.state_lock_table
+    aws_account_id      = local.aws_account_id
+    project_name        = local.project_name
+    environment         = local.environment
+    deploy_environments = [local.environment]
+    github_repo         = local.github_repo
+    deploy_role_name    = local.deploy_role_name
+    state_bucket        = local.state_bucket
+    state_lock_table    = local.state_lock_table
   }
 )

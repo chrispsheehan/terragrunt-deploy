@@ -1,10 +1,20 @@
+variable "deploy_role_name" {
+  type        = string
+  description = "The name of the OIDC role to be created"
+}
+
+variable "github_repo" {
+  type        = string
+  description = "The target repo for OIDC access i.e octo-org/octo-repo"
+}
+
 variable "state_bucket" {
-  description = "Name of s3 terragrunt state bucket"
+  description = "Name of s3 terraform state bucket - used to allow state updates in ci deployments"
   type        = string
 }
 
 variable "state_lock_table" {
-  description = "Name of dynamo db terragrunt state lock table"
+  description = "Name of dynamo db terraform state lock table - used to allow state locking in ci deployments"
   type        = string
 }
 
@@ -20,7 +30,7 @@ variable "deploy_tags" {
   default     = []
 }
 
-variable "environments" {
+variable "deploy_environments" {
   type        = list(string)
   description = "The github environments allowed to deploy with this role"
   default     = []
@@ -32,23 +42,13 @@ variable "allow_deployments" {
   default     = false
 }
 
-variable "oidc_role_actions" {
+variable "allowed_role_actions" {
   type        = list(string)
   description = "The action(s) to be allowed i.e. [dynamodb:*]"
   default     = []
 }
 
-variable "deploy_role_name" {
-  type        = string
-  description = "The role to use by OIDC"
-}
-
-variable "github_repo" {
-  type        = string
-  description = "The target repo for OIDC access i.e octo-org/octo-repo"
-}
-
-variable "oidc_resources" {
+variable "allowed_role_resources" {
   type        = list(string)
   description = "The resource(s) to be allowed"
   default     = ["*"]

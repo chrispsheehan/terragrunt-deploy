@@ -41,8 +41,8 @@ data "aws_iam_policy_document" "role_management" {
 data "aws_iam_policy_document" "defined" {
   statement {
     sid       = "AllowDefinedResourcePermissions"
-    actions   = var.oidc_role_actions
-    resources = var.oidc_resources
+    actions   = var.allowed_role_actions
+    resources = var.allowed_role_resources
   }
 }
 
