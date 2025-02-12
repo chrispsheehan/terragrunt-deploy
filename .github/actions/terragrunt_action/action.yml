@@ -133,13 +133,22 @@ runs:
         echo "Cache Hit: ${{ steps.cache-restore.outputs.cache-hit }}"
         echo "CACHE_HIT=${{ steps.cache-restore.outputs.cache-hit }}" >> $GITHUB_ENV
 
-    - name: Action Terragrunt
+    - name: Action Terragrunt with Cache
+      if: ${{ inputs.use_cache == 'true' }}
       shell: bash
       working-directory: ${{ inputs.tg_directory }}
       run: |
         terragrunt ${{ inputs.tg_action }} \
           --terragrunt-provider-cache \
           --terragrunt-provider-cache-dir "${TERRAGRUNT_PROVIDER_CACHE_DIR}" \
+          -auto-approve -compact-warnings
+
+    - name: Action Terragrunt
+      if: ${{ inputs.use_cache == 'false' }}
+      shell: bash
+      working-directory: ${{ inputs.tg_directory }}
+      run: |
+        terragrunt ${{ inputs.tg_action }} \
           -auto-approve -compact-warnings
 
     - name: Delete Terraform State Files
