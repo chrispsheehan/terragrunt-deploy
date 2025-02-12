@@ -2,6 +2,10 @@
 
 Repo configuration and modular deployments of aws resources leveraging Github action environments. Enabling configuration at global and environment levels.
 
+- use multiple providers (aws/github) while sharing env vars
+- low-friction method to initially setting up workflows/ci
+- caching terraform init files via github cache in ci
+
 ## setup local env
 
 Requires a github login with relevant repository privileges.
@@ -33,13 +37,6 @@ Creates:
 just init prod
 ```
 
-***WARNING***
-Terragrunt will create the s3 state bucket the first time this is done - this should only happen *ONCE*.
-
-```sh
-Remote state S3 bucket your-state-bucket-name-tfstate does not exist or you dont have permissions to access it. Would you like Terragrunt to create it? (y/n) y
-```
-
 ## locally plan
 
 This is in the format of `just tg [environment] [provider/module] [action]`. Example below.
@@ -50,14 +47,24 @@ just tg prod aws/bucket plan
 
 ## variables
 
-Can be set withing an hcl via `inputs = {}` within `infra/terragrunt.hcl` or via files at the below paths.
+Defined via files named `[env]_vars.hcl`. i.e `dev_vars.hcl`.
 
-- root level `infra/live/global_vars.hcl`
-- environment level `infra/live/[env_name]_vars.hcl`
-  - example `infra/live/dev_vars.hcl`
+## re-create lock files
+
+```sh
+just clean-terragrunt-cache
+just tg-all init
+```
 
 ## releases
 
 Update version within `pyproject.toml` and commit to `main` to trigger a release.
 
 Prod is deployed when a release is created.
+
+***WARNING***
+Terragrunt will create the s3 state bucket the first time this is done - this should only happen *ONCE*.
+
+```sh
+Remote state S3 bucket your-state-bucket-name-tfstate does not exist or you dont have permissions to access it. Would you like Terragrunt to create it? (y/n) y
+```
