@@ -73,6 +73,17 @@ To add one run the below. This example allows `some-temp-branch` to deploy from 
 TEMP_DEPLOY_BRANCH=some-temp-branch just init dev
 ```
 
+Add the branch name to `.github/workflows/deploy_dev.yml` as below. Or select branch on manual trigger in UI at `/actions/workflows/deploy_dev.yml`.
+
+```yaml
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - some-temp-branch
+```
+
 revert with
 
 ```sh
