@@ -62,6 +62,25 @@ Update version within `pyproject.toml` and commit to `main` to trigger a release
 
 Prod is deployed when a release is created.
 
+
+## temp deploy branch
+
+In some cases it may be necessary to deploy from a temporary branch.
+
+To add one run the below. This example allows `some-temp-branch` to deploy from `dev`.
+
+```sh
+TEMP_DEPLOY_BRANCH=some-temp-branch just init dev
+```
+
+revert with
+
+```sh
+just init dev
+```
+
+## gotchas
+
 ***WARNING***
 Terragrunt will create the s3 state bucket the first time this is done - this should only happen *ONCE*.
 
