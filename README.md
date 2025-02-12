@@ -47,7 +47,7 @@ just tg prod aws/bucket plan
 
 ## variables
 
-Defined via files named `[env]_vars.hcl`. i.e `dev_vars.hcl`.
+Defined via files named `infra/live/[env]_vars.hcl`. i.e `infra/live/dev_vars.hcl`.
 
 ## re-create lock files
 
