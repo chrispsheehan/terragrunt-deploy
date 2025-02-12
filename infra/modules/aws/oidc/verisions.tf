@@ -1,6 +1,6 @@
 terraform {
-  //this is overridden by backend setup in infra/terragrunt.hcl
-  backend "s3" {}
+  // overridden by backend setup in infra/terragrunt.hcl ////
+  backend "s3" {} // only required for local modules ///////
   ///////////////////////////////////////////////////////////
 
   required_providers {
