@@ -39,6 +39,12 @@ remote_state {
   }
 }
 
+generate "versions" {
+  path      = "versions.tf"
+  if_exists = "skip"
+  contents  = ""
+}
+
 generate "aws_provider" {
   path      = "provider_aws.tf"
   if_exists = "overwrite_terragrunt"
