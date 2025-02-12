@@ -74,5 +74,7 @@ clean-terragrunt-cache:
     find {{PROJECT_DIR}} -type d -name ".terraform" -exec rm -rf {} +
     @echo "Cleaning up .terraform.lock.hcl files in {{PROJECT_DIR}}..."
     find {{PROJECT_DIR}} -type f -name ".terraform.lock.hcl" -exec rm -f {} +
-    @echo "Clearing Terragrunt cache..."
-    rm -rf ~/.terragrunt
+    @echo "Cleaning up .terragrunt-cache directories in {{PROJECT_DIR}}..."
+    find {{PROJECT_DIR}} -type d -name ".terragrunt-cache" -exec rm -rf {} +
+    @echo "Cleaning up terragrunt-debug.tfvars.json files in {{PROJECT_DIR}}..."
+    find {{PROJECT_DIR}} -type f -name "terragrunt-debug.tfvars.json" -exec rm -f {} +
