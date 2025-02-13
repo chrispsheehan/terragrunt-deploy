@@ -32,6 +32,7 @@ just setup
 Creates:
   - OIDC role for ci deployment to aws resources
   - Github environment containing required environment variables
+    - **note** the environment controls which branches are allowed to deploy
 
 ```sh
 just init prod
