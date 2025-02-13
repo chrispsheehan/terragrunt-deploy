@@ -28,13 +28,13 @@ variable "environment" {
   type        = string
 }
 
-variable "deploy_branches" {
+variable "environment_branches" {
   type        = list(string)
   description = "The target branches for environment to deploy from i.e main"
   default     = []
 }
 
-variable "deploy_tags" {
+variable "environment_tags" {
   type        = list(string)
   description = "The target tags for environment to deploy from i.e * for all"
   default     = []

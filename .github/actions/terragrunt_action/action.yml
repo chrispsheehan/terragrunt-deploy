@@ -20,11 +20,15 @@ inputs:
     description: "AWS Region"
     required: true
   tg_directory:
-    description: "Module directory to preform action upon"
+    description: "Module directory to perform action upon"
     required: true
   tg_action:
     description: "Terragrunt action to perform (`apply` or `destroy`)"
     required: true
+  use_cache:
+    description: "Flag to enable or disable caching"
+    required: false
+    default: "true"
 
 runs:
   using: "composite"
@@ -52,6 +56,7 @@ runs:
         aws-region: ${{ inputs.aws_region }}
 
     - name: Set up Terraform Cache vars
+      if: ${{ inputs.use_cache == 'true' }}
       shell: bash
       run: |
         export TF_CACHE_DIR="${{ github.workspace }}/${{ inputs.tg_directory }}/.terragrunt-cache"
@@ -67,6 +72,7 @@ runs:
         mkdir -p "${TERRAGRUNT_PROVIDER_CACHE_DIR}"
 
     - name: Determine Cache Key
+      if: ${{ inputs.use_cache == 'true' }}
       id: cache-key
       shell: bash
       run: |
@@ -76,6 +82,7 @@ runs:
         echo "CACHE_KEY=${CACHE_KEY}" >> $GITHUB_ENV
 
     - name: Restore Terraform Cache
+      if: ${{ inputs.use_cache == 'true' }}
       id: cache-restore
       uses: actions/cache@v3
       with:
@@ -86,6 +93,7 @@ runs:
         restore-keys: terraform-${{ runner.os }}-
 
     - name: List Terraform State Files (Before Deletion)
+      if: ${{ inputs.use_cache == 'true' }}
       id: check_state_files
       shell: bash
       run: |
@@ -107,7 +115,7 @@ runs:
         fi
 
     - name: Delete Terraform State Files (If Found)
-      if: ${{ steps.check_state_files.outputs.state_count > 0 }}
+      if: ${{ inputs.use_cache == 'true' && steps.check_state_files.outputs.state_count > 0 }}
       shell: bash
       run: |
         echo "🚨 Deleting Terraform state files..."
@@ -119,12 +127,14 @@ runs:
         echo "✅ Terraform state files deleted successfully."
 
     - name: Cache Hit Output
+      if: ${{ inputs.use_cache == 'true' }}
       shell: bash
       run: |
         echo "Cache Hit: ${{ steps.cache-restore.outputs.cache-hit }}"
         echo "CACHE_HIT=${{ steps.cache-restore.outputs.cache-hit }}" >> $GITHUB_ENV
- 
-    - name: Action Terragrunt
+
+    - name: Action Terragrunt with Cache
+      if: ${{ inputs.use_cache == 'true' }}
       shell: bash
       working-directory: ${{ inputs.tg_directory }}
       run: |
@@ -133,7 +143,16 @@ runs:
           --terragrunt-provider-cache-dir "${TERRAGRUNT_PROVIDER_CACHE_DIR}" \
           -auto-approve -compact-warnings
 
+    - name: Action Terragrunt
+      if: ${{ inputs.use_cache == 'false' }}
+      shell: bash
+      working-directory: ${{ inputs.tg_directory }}
+      run: |
+        terragrunt ${{ inputs.tg_action }} \
+          -auto-approve -compact-warnings
+
     - name: Delete Terraform State Files
+      if: ${{ inputs.use_cache == 'true' }}
       shell: bash
       run: |
         STATE_FILES=$(find ${{ env.TF_CACHE_DIR }} -type f -name "terraform.tfstate*")
