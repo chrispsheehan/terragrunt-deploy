@@ -38,10 +38,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/terragrunt_action
+      - id: terragrunt_action
+        uses: ./.github/actions/terragrunt_action
         with:
           aws_oidc_role_arn: ${{ vars.AWS_OIDC_ROLE_ARN }}
           aws_region: ${{ vars.AWS_REGION }}
           tg_directory: infra/live/${{inputs.environment}}/aws/bucket
           tg_action: apply
           use_cache: ${{ inputs.use_cache }}
+      - name: Print Terraform Outputs
+        run: |
+          echo "Full Terraform JSON Output: ${{ steps.terragrunt_action.outputs.tg_outputs }}"

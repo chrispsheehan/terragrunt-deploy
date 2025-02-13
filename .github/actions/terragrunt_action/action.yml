@@ -30,6 +30,11 @@ inputs:
     required: false
     default: "true"
 
+outputs:
+  tg_outputs:
+    description: "All Terraform outputs in JSON format"
+    value: ${{ steps.tg_outputs.outputs.terraform_json }}
+
 runs:
   using: "composite"
   steps:
@@ -161,3 +166,15 @@ runs:
         echo "$STATE_FILES"
         echo "$STATE_FILES" | xargs rm -f
         echo "✅ Terraform state files deleted successfully."
+
+    - name: Capture Terraform Outputs
+      if: inputs.tg_action != 'destroy'
+      id: tg_outputs
+      shell: bash
+      working-directory: ${{ inputs.tg_directory }}
+      run: |
+        echo "📤 Capturing all Terraform outputs..."
+        TERRAGRUNT_OUTPUTS=$(terragrunt output -json)
+        echo "terraform_json=$TERRAGRUNT_OUTPUTS" >> $GITHUB_OUTPUT
+        echo "$TERRAGRUNT_OUTPUTS" | jq -r 'to_entries | .[] | "echo \(.key)=\(.value.value) >> $GITHUB_OUTPUT"' | bash
+        echo "✅ Terraform outputs captured successfully."
