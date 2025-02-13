@@ -48,4 +48,4 @@ jobs:
           use_cache: ${{ inputs.use_cache }}
       - name: Print Terraform Outputs
         run: |
-          echo "Full Terraform JSON Output: ${{ steps.terragrunt_action.outputs.tg_outputs }}"
+          echo "Full Terraform JSON Output: ${{ steps.terragrunt_action.outputs.tg_outputs.bucket_name.value }}"
