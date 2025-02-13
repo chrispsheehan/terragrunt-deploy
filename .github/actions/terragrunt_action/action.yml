@@ -174,7 +174,6 @@ runs:
       working-directory: ${{ inputs.tg_directory }}
       run: |
         echo "📤 Capturing all Terraform outputs..."
-        TERRAGRUNT_OUTPUTS=$(terragrunt output -json)
+        TERRAGRUNT_OUTPUTS=$(terragrunt output -json | jq -c)
         echo "terraform_json=$TERRAGRUNT_OUTPUTS" >> $GITHUB_OUTPUT
-        echo "$TERRAGRUNT_OUTPUTS" | jq -r 'to_entries | .[] | "echo \(.key)=\(.value.value) >> $GITHUB_OUTPUT"' | bash
         echo "✅ Terraform outputs captured successfully."
