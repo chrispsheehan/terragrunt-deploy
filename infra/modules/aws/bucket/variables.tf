@@ -1,14 +1,4 @@
-variable "aws_region" {
-  description = "Region to which resources will be deployed"
-  type        = string
-}
-
-variable "environment" {
-  description = "Environment to which resources will be deployed"
-  type        = string
-}
-
-variable "project_name" {
-  description = "Project name used in naming deployed resources"
+variable "lambda_code_bucket" {
+  description = "Name of the s3 bucket to create"
   type        = string
 }

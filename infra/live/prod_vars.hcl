@@ -3,7 +3,7 @@ locals {
   default_branch = local.global_vars.inputs.default_branch
 
   environment_branches = [local.environment_branch]
-  environment_tags = ["*"]
+  environment_tags     = ["*"]
 }
 
 inputs = {
