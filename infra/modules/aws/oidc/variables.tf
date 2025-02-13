@@ -50,6 +50,6 @@ variable "allowed_role_actions" {
 
 variable "allowed_role_resources" {
   type        = list(string)
-  description = "The resource(s) to be allowed"
+  description = "The resource(s) to be allowed - will be limited by the above actions"
   default     = ["*"]
 }

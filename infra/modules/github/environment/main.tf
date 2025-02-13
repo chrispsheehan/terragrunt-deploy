@@ -10,7 +10,7 @@ resource "github_repository_environment" "this" {
 }
 
 resource "github_repository_environment_deployment_policy" "branch" {
-  for_each = toset(var.deploy_branches)
+  for_each = toset(var.environment_branches)
 
   repository     = data.github_repository.this.name
   environment    = github_repository_environment.this.environment
@@ -18,13 +18,12 @@ resource "github_repository_environment_deployment_policy" "branch" {
 }
 
 resource "github_repository_environment_deployment_policy" "tag" {
-  for_each = toset(var.deploy_tags)
+  for_each = toset(var.environment_tags)
 
   repository  = data.github_repository.this.name
   environment = github_repository_environment.this.environment
   tag_pattern = each.value
 }
-
 
 resource "github_actions_environment_variable" "this" {
   for_each = local.variables
