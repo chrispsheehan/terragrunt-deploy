@@ -78,3 +78,28 @@ clean-terragrunt-cache:
     find {{PROJECT_DIR}} -type d -name ".terragrunt-cache" -exec rm -rf {} +
     @echo "Cleaning up terragrunt-debug.tfvars.json files in {{PROJECT_DIR}}..."
     find {{PROJECT_DIR}} -type f -name "terragrunt-debug.tfvars.json" -exec rm -f {} +
+
+build version:
+    #!/usr/bin/env bash
+    python_dir="{{PROJECT_DIR}}/src"
+    cd $python_dir
+    zip_file="{{PROJECT_DIR}}/{{version}}.zip"
+    zip -r $zip_file . > /dev/null
+    echo $zip_file
+
+local-upload s3_bucket_name:
+    #!/usr/bin/env bash
+    local_version="$(hostname | tr 'A-Z>.' 'a-z--')-$(git rev-parse --short HEAD)"
+    zip_file_path=$(just build $local_version)
+    aws s3 cp "$zip_file_path" "s3://{{s3_bucket_name}}/" --quiet
+    basename $zip_file_path
+
+local-deploy env:
+    #!/usr/bin/env bash
+    just init {{env}}
+    just tg {{env}} aws/oidc apply
+    just tg {{env}} aws/bucket apply
+    s3_bucket_name=$(just tg {{env}} aws/bucket 'output -raw bucket_name')
+    export TF_VAR_lambda_code_key=$(just local-upload $s3_bucket_name)
+    echo "deploying.. $TF_VAR_lambda_code_key"
+    just tg {{env}} aws/lambda apply
