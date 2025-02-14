@@ -30,6 +30,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build:
+    permissions:
+      id-token: write
+      contents: read
     needs: release
     uses: ./.github/workflows/build.yml
     with:
