@@ -31,3 +31,19 @@ jobs:
           tg_directory: infra/live/${{inputs.environment}}/aws/oidc
           tg_action: apply
           use_cache: ${{ inputs.use_cache }}
+
+  lambda:
+    environment:
+      name: ${{inputs.environment}}
+    runs-on: ubuntu-latest
+    env:
+      TF_VAR_lambda_code_key: "${{inputs.version}}.zip"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/terragrunt_action
+        with:
+          aws_oidc_role_arn: ${{ vars.AWS_OIDC_ROLE_ARN }}
+          aws_region: ${{ vars.AWS_REGION }}
+          tg_directory: infra/live/${{inputs.environment}}/aws/lambda
+          tg_action: apply
+          use_cache: ${{ inputs.use_cache }}
