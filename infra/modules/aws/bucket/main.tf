@@ -8,7 +8,7 @@ resource "aws_s3_bucket_policy" "this" {
 }
 
 resource "aws_s3_bucket_lifecycle_configuration" "delete_old_files" {
-  count  = var.s3_expiration_days > 0 ? 1 : 0
+  count = var.s3_expiration_days > 0 ? 1 : 0
 
   bucket = aws_s3_bucket.this.id
 
