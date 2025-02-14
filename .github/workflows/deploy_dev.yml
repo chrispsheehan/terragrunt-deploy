@@ -23,7 +23,7 @@ jobs:
       - id: set_sha
         run: echo "sha_short=$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_OUTPUT
 
-  build:
+  zip:
     needs: setup
     uses: ./.github/workflows/build.yml
     with:
@@ -33,7 +33,7 @@ jobs:
   dev:
     needs: 
       - setup
-      - build
+      - zip
     uses: ./.github/workflows/deploy.yml
     with:
       environment: dev
