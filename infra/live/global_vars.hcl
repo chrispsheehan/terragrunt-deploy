@@ -1,7 +1,11 @@
 locals {
   aws_region             = "eu-west-2"
   default_branch         = "main"
-  allowed_role_actions   = ["s3:*"]
+  allowed_role_actions   = [
+    "s3:*",
+    "iam:*",
+    "lambda:*"
+  ]
   allowed_role_resources = ["*"]
 }
 

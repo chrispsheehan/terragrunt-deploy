@@ -33,6 +33,7 @@ jobs:
           use_cache: ${{ inputs.use_cache }}
 
   lambda:
+    needs: oidc
     environment:
       name: ${{inputs.environment}}
     runs-on: ubuntu-latest
