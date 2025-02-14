@@ -18,4 +18,5 @@ jobs:
     uses: ./.github/workflows/deploy.yml
     with:
       environment: prod
+      use_cache: false
       version: 0.0.3
