@@ -10,6 +10,7 @@ on:
       version:
         description: "Version of code to be built"
         required: true
+        type: string
   
 permissions:
   id-token: write
