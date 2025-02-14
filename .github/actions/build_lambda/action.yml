@@ -35,7 +35,7 @@ runs:
     - name: Build lambda code
       shell: bash
       run: |
-        zip_file_path=$(build version ${{ inputs.version }})
+        zip_file_path=$(just build version ${{ inputs.version }})
         echo "ZIP_FILE_PATH=$zip_file_path" >> $GITHUB_ENV
 
     - name: Set lambda code s3 key
