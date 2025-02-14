@@ -37,5 +37,4 @@ jobs:
     uses: ./.github/workflows/deploy.yml
     with:
       environment: dev
-      use_cache: false
       version: ${{ needs.setup.outputs.sha_short }}
