@@ -17,7 +17,7 @@ permissions:
     contents: read
 
 jobs:
-  bucket:
+  lambda:
     environment:
       name: ${{inputs.environment}} # uses the environment containing the env vars (vars.) used in the below action
     runs-on: ubuntu-latest
@@ -27,5 +27,5 @@ jobs:
         with:
           aws_oidc_role_arn: ${{ vars.AWS_OIDC_ROLE_ARN }}
           aws_region: ${{ vars.AWS_REGION }}
-          tg_directory: infra/live/${{inputs.environment}}/aws/bucket
+          tg_directory: infra/live/${{inputs.environment}}/aws/lambda
           tg_action: destroy
