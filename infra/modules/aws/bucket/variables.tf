@@ -8,3 +8,13 @@ variable "s3_expiration_days" {
   type        = number
   default     = 0
 }
+
+variable "allowed_read_role_arns" {
+  description = "AWS resource roles allows to download s3 object(s)"
+  type        = list(string)
+}
+
+variable "allowed_write_role_arns" {
+  description = "AWS OIDC role allowed to upload s3 object(s)"
+  type        = list(string)
+}
