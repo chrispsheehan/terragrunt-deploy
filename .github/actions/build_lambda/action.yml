@@ -1,0 +1,50 @@
+name: "Build and upload lambda zip to s3 bucket"
+description: "Sets up Just, Terraform, Terragrunt, and configures AWS OIDC authentication"
+inputs:
+  just_version:
+    description: "Version of Just to install"
+    required: false
+    default: "1.0.0"
+  aws_oidc_role_arn:
+    description: "AWS OIDC Role to assume"
+    required: true
+  aws_region:
+    description: "AWS Region"
+    required: true
+  s3_bucket:
+    description: "Name of s3 bucket to store the build"
+    required: true
+  version:
+    description: "Version of code to be built"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install Just
+      uses: extractions/setup-just@v2
+      with:
+        just-version: ${{ inputs.just_version }}
+
+    - name: Configure AWS OIDC Authentication
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ inputs.aws_oidc_role_arn }}
+        aws-region: ${{ inputs.aws_region }}
+
+    - name: Build lambda code
+      shell: bash
+      run: |
+        zip_file_path=$(just build ${{ inputs.version }})
+        echo "ZIP_FILE_PATH=$zip_file_path" >> $GITHUB_ENV
+
+    - name: Set lambda code s3 key
+      shell: bash
+      run: |
+        zip_file_key=$(basename $ZIP_FILE_PATH)
+        echo "ZIP_FILE_KEY=$zip_file_key" >> $GITHUB_ENV
+
+    - name: Upload lambda code
+      shell: bash
+      run: |
+        aws s3 cp $ZIP_FILE_PATH "s3://${{ inputs.s3_bucket }}/"

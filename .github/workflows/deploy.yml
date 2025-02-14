@@ -8,13 +8,14 @@ on:
         required: false
         type: boolean
         default: true
+      version:
+        description: "Version of code to be built"
+        type: string
+        required: true
 
 concurrency: # only run one instance of workflow at any one time
   group: ${{ github.workflow }}-${{inputs.environment}}
   cancel-in-progress: false
-
-env:
-  TF_VAR_git_token: ${{ secrets.GIT_TOKEN }}
 
 jobs:
   oidc:
@@ -31,17 +32,19 @@ jobs:
           tg_action: apply
           use_cache: ${{ inputs.use_cache }}
 
-  bucket:
+  lambda:
     needs: oidc
     environment:
       name: ${{inputs.environment}}
     runs-on: ubuntu-latest
+    env:
+      TF_VAR_lambda_code_key: "${{inputs.version}}.zip"
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/terragrunt_action
         with:
           aws_oidc_role_arn: ${{ vars.AWS_OIDC_ROLE_ARN }}
           aws_region: ${{ vars.AWS_REGION }}
-          tg_directory: infra/live/${{inputs.environment}}/aws/bucket
+          tg_directory: infra/live/${{inputs.environment}}/aws/lambda
           tg_action: apply
           use_cache: ${{ inputs.use_cache }}

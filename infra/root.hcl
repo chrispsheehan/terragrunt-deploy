@@ -11,8 +11,11 @@ locals {
   global_vars      = read_terragrunt_config(find_in_parent_folders("global_vars.hcl"))
   environment_vars = read_terragrunt_config(find_in_parent_folders("${local.environment}_vars.hcl"))
 
-  aws_region       = local.global_vars.inputs.aws_region
-  project_name     = replace(local.github_repo, "/", "-")
+  aws_region         = local.global_vars.inputs.aws_region
+  project_name       = replace(local.github_repo, "/", "-")
+  lambda_name        = local.environment == "prod" ? local.project_name : "${local.environment}-${local.project_name}"
+  lambda_code_bucket = "${local.aws_account_id}-${local.aws_region}-${local.lambda_name}"
+
   deploy_role_name = "${local.project_name}-${local.environment}-github-oidc-role"
   state_bucket     = "${local.aws_account_id}-${local.aws_region}-${local.project_name}-tfstate"
   state_key        = "${local.environment}/${local.provider}/${local.module}/terraform.tfstate"
@@ -40,6 +43,7 @@ remote_state {
 }
 
 generate "versions" {
+  # this allows individual provider versioning for local modules
   path      = "versions.tf"
   if_exists = "skip"
   contents  = ""
@@ -80,5 +84,7 @@ inputs = merge(
     deploy_role_name    = local.deploy_role_name
     state_bucket        = local.state_bucket
     state_lock_table    = local.state_lock_table
+    lambda_name         = local.lambda_name
+    lambda_code_bucket  = local.lambda_code_bucket
   }
 )

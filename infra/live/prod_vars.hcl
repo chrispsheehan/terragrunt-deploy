@@ -2,8 +2,8 @@ locals {
   global_vars    = read_terragrunt_config("global_vars.hcl")
   default_branch = local.global_vars.inputs.default_branch
 
-  environment_branches = [local.environment_branch]
-  environment_tags = ["*"]
+  environment_branches = [local.default_branch]
+  environment_tags     = ["*"]
 }
 
 inputs = {

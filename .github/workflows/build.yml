@@ -1,0 +1,55 @@
+name: Build and Push Lambda code
+description: Build Python code, zip and then push to s3 bucket
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      version:
+        description: "Version of code to be built"
+        required: true
+        type: string
+  
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  bucket:
+    environment:
+      name: ${{inputs.environment}}
+    runs-on: ubuntu-latest
+    outputs:
+      bucket_name: ${{ steps.get_bucket.outputs.bucket_name }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: terragrunt_action
+        uses: ./.github/actions/terragrunt_action
+        with:
+          aws_oidc_role_arn: ${{ vars.AWS_OIDC_ROLE_ARN }}
+          aws_region: ${{ vars.AWS_REGION }}
+          tg_directory: infra/live/${{inputs.environment}}/aws/bucket
+          tg_action: apply
+          use_cache: ${{ inputs.use_cache }}
+      - name: Get Bucket
+        id: get_bucket
+        env:
+          TG_OUTPUTS: ${{ steps.terragrunt_action.outputs.tg_outputs  }}
+        run: |
+          echo "bucket_name=$(echo $TG_OUTPUTS | jq -r '.bucket_name.value')" >> $GITHUB_OUTPUT
+
+  build:
+    needs: bucket
+    environment:
+      name: ${{inputs.environment}}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/build_lambda
+        with:
+          aws_oidc_role_arn: ${{ vars.AWS_OIDC_ROLE_ARN }}
+          aws_region: ${{ vars.AWS_REGION }}
+          s3_bucket: ${{ needs.bucket.outputs.bucket_name}}
+          version: ${{ inputs.version }}

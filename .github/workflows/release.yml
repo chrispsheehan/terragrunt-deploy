@@ -29,11 +29,9 @@ jobs:
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  prod:
+  build:
     needs: release
-    permissions:
-      id-token: write
-      contents: read
-    uses: ./.github/workflows/deploy.yml
+    uses: ./.github/workflows/build.yml
     with:
-      environment: prod
+      environment: dev
+      version: ${{ inputs.version }}

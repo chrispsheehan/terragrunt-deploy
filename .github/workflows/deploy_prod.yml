@@ -1,0 +1,21 @@
+name: Deploy Prod
+description: Deploy the Prod environment
+
+on:
+  workflow_dispatch:
+  push:
+      branches:
+          - main
+      paths:
+          - ".github/workflows/deploy_prod.yml"
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  prod:
+    uses: ./.github/workflows/deploy.yml
+    with:
+      environment: prod
+      version: b19539
