@@ -18,4 +18,4 @@ jobs:
     uses: ./.github/workflows/deploy.yml
     with:
       environment: prod
-      version: b19539
+      version: 0.0.3
