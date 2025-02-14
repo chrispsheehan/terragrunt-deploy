@@ -16,7 +16,7 @@ resource "aws_iam_role_policy_attachment" "this" {
 resource "aws_lambda_function" "lambda" {
   function_name = var.lambda_name
   role          = aws_iam_role.this.arn
-  handler       = "lambda_function.lambda_handler"
+  handler       = local.lambda_handler
   runtime       = local.lambda_runtime
 
   s3_bucket        = data.aws_s3_bucket.this.bucket
