@@ -8,8 +8,11 @@ locals {
     ["feature/temp-debug-branch", local.default_branch],
     length(local.temp_branch) > 0 ? [local.temp_branch] : []
   )
+
+  s3_expiration_days = 3
 }
 
 inputs = {
   environment_branches = local.environment_branches
+  s3_expiration_days   = local.s3_expiration_days
 }
