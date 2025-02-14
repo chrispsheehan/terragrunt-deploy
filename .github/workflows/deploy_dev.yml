@@ -15,8 +15,28 @@ permissions:
   contents: read
 
 jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      sha_short: ${{ steps.set_sha.outputs.sha_short }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: set_sha
+        run: echo "sha_short=$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_OUTPUT
+
+  build:
+    needs: setup
+    uses: ./.github/workflows/shared/build.yml
+    with:
+      environment: dev
+      version: ${{ needs.setup.outputs.sha_short }}
+
   dev:
+    needs: 
+      - setup
+      - build
     uses: ./.github/workflows/deploy.yml
     with:
       environment: dev
       use_cache: false
+      version: ${{ needs.setup.outputs.sha_short }}

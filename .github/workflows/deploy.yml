@@ -8,6 +8,10 @@ on:
         required: false
         type: boolean
         default: true
+      version:
+        description: "Version of code to be built"
+        type: string
+        required: true
 
 concurrency: # only run one instance of workflow at any one time
   group: ${{ github.workflow }}-${{inputs.environment}}
@@ -27,24 +31,3 @@ jobs:
           tg_directory: infra/live/${{inputs.environment}}/aws/oidc
           tg_action: apply
           use_cache: ${{ inputs.use_cache }}
-
-  bucket:
-    needs: oidc
-    environment:
-      name: ${{inputs.environment}}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - id: terragrunt_action
-        uses: ./.github/actions/terragrunt_action
-        with:
-          aws_oidc_role_arn: ${{ vars.AWS_OIDC_ROLE_ARN }}
-          aws_region: ${{ vars.AWS_REGION }}
-          tg_directory: infra/live/${{inputs.environment}}/aws/bucket
-          tg_action: apply
-          use_cache: ${{ inputs.use_cache }}
-      - name: Print Terraform Outputs
-        env:
-          TG_OUTPUTS: ${{ steps.terragrunt_action.outputs.tg_outputs  }}
-        run: |
-          echo "Bucket: $(echo $TG_OUTPUTS | jq -r '.bucket_name.value')"
