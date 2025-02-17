@@ -12,6 +12,10 @@ on:
         description: "Version of code to be built"
         type: string
         required: true
+      lambda_code_deploy_bucket:
+        description: "Version of code to be built"
+        type: string
+        required: true
 
 concurrency: # only run one instance of workflow at any one time
   group: ${{ github.workflow }}-${{inputs.environment}}
@@ -39,6 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       TF_VAR_lambda_code_key: "${{inputs.version}}.zip"
+      TF_VAR_lambda_code_deploy_bucket: ${{ inputs.lambda_code_deploy_bucket }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/terragrunt_action

@@ -3,7 +3,12 @@ variable "lambda_name" {
   type        = string
 }
 
-variable "lambda_code_bucket" {
+variable "lambda_role_name" {
+  description = "Name of lambda role to be deployed"
+  type        = string
+}
+
+variable "lambda_code_deploy_bucket" {
   description = "Name of s3 bucket from which to pull lambda zipped code from"
   type        = string
 }

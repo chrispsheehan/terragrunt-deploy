@@ -5,9 +5,9 @@ on:
   workflow_dispatch:
   push:
       branches:
-          - main
+        - main
       paths:
-          - ".github/workflows/deploy_prod.yml"
+        - ".github/workflows/deploy_prod.yml"
 
 permissions:
   id-token: write
@@ -19,3 +19,4 @@ jobs:
     with:
       environment: prod
       version: 0.0.5
+      lambda_code_deploy_bucket: ${{ vars.LAMBDA_CODE_BUCKET }}

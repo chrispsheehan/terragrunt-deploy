@@ -1,5 +1,5 @@
 data "aws_s3_bucket" "this" {
-  bucket = var.lambda_code_bucket
+  bucket = var.lambda_code_deploy_bucket
 }
 
 data "aws_s3_object" "this" {

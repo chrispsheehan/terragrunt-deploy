@@ -63,6 +63,7 @@ init env:
 
 setup:
     #!/usr/bin/env bash
+    just init ci
     export TF_VAR_git_token=$(just get-git-token)
     just tg ci github/repo apply
 
