@@ -19,4 +19,3 @@ jobs:
     with:
       environment: prod
       version: 0.0.5
-      lambda_code_deploy_bucket: ${{ vars.LAMBDA_CODE_BUCKET }}
