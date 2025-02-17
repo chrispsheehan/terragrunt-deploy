@@ -21,7 +21,7 @@ brew install coreutils
 
 ## setup repo
 
-Apply Github repository settings and preferences.
+Apply Github repository settings and and create ci s3 bucket for version storage.
 
 ```sh
 just setup
