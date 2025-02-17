@@ -36,5 +36,5 @@ jobs:
     needs: release
     uses: ./.github/workflows/build.yml
     with:
-      environment: prod
+      environment: ci
       version: ${{ inputs.version }}

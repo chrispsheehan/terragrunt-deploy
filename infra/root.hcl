@@ -13,8 +13,8 @@ locals {
 
   aws_region         = local.global_vars.inputs.aws_region
   project_name       = replace(local.github_repo, "/", "-")
-  lambda_name        = local.environment == "prod" ? local.project_name : "${local.environment}-${local.project_name}"
-  lambda_code_bucket = "${local.aws_account_id}-${local.aws_region}-${local.lambda_name}"
+  lambda_name        = local.environment == "ci" ? local.project_name : "${local.environment}-${local.project_name}"
+  lambda_code_bucket = local.environment == "dev" ? "${local.aws_account_id}-${local.aws_region}-${local.lambda_name}" : "${local.aws_account_id}-${local.aws_region}-${local.project_name}"
 
   deploy_role_name = "${local.project_name}-${local.environment}-github-oidc-role"
   state_bucket     = "${local.aws_account_id}-${local.aws_region}-${local.project_name}-tfstate"
