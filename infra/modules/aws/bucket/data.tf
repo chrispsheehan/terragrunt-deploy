@@ -3,20 +3,21 @@ data "aws_iam_role" "oidc_role" {
 }
 
 data "aws_iam_policy_document" "allow_bucket_roles" {
-  statement {
-    effect = "Allow"
-    sid    = "AllowGetAndListFromDefinedIamRoles"
+  dynamic "statement" {
+    for_each = var.allowed_read_aws_account_ids
+    content {
+      sid     = "AllowGetAndListFromAccount_${statement.value}"
+      effect  = "Allow"
+      actions = local.read_actions
+      resources = [
+        aws_s3_bucket.this.arn,
+        "${aws_s3_bucket.this.arn}/*"
+      ]
 
-    actions = local.read_actions
-
-    resources = [
-      aws_s3_bucket.this.arn,
-      "${aws_s3_bucket.this.arn}/*"
-    ]
-
-    principals {
-      type        = "AWS"
-      identifiers = local.allowed_read_role_arns
+      principals {
+        type        = "AWS"
+        identifiers = ["arn:aws:iam::${statement.value}:root"]
+      }
     }
   }
 
@@ -25,7 +26,7 @@ data "aws_iam_policy_document" "allow_bucket_roles" {
     sid    = "AllowGetListAndPutFromDefinedIamRoles"
 
     actions = local.write_actions
-    
+
     resources = [
       aws_s3_bucket.this.arn,
       "${aws_s3_bucket.this.arn}/*"

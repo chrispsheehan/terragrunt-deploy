@@ -14,8 +14,8 @@ variable "deploy_role_name" {
   description = "The name of the OIDC role used in deploying the environment"
 }
 
-variable "allowed_read_role_arns" {
-  description = "AWS resource roles allows to download s3 object(s)"
+variable "allowed_read_aws_account_ids" {
+  description = "AWS account ids allowed to download s3 object(s)"
   type        = list(string)
   default     = []
 }
