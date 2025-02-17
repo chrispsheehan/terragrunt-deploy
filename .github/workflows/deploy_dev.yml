@@ -8,6 +8,7 @@ on:
       - main
     paths-ignore:
       - "pyproject.toml"
+      - ".github/workflows/deploy_prod.yml"
   
 permissions:
   id-token: write
