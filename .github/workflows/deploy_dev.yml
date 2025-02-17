@@ -38,3 +38,4 @@ jobs:
     with:
       environment: dev
       version: ${{ needs.setup.outputs.sha_short }}
+      lambda_code_deploy_bucket: ${{ vars.LAMBDA_CODE_BUCKET }}
