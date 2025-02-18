@@ -33,3 +33,34 @@ data "aws_iam_policy_document" "lambda_s3_read" {
     ]
   }
 }
+
+data "aws_iam_policy_document" "logs_policy" {
+  statement {
+    actions = [
+      "logs:CreateLogStream",
+      "logs:CreateLogGroup",
+      "logs:PutLogEvents"
+    ]
+
+    effect = "Allow"
+
+    resources = [
+      "${aws_cloudwatch_log_group.this.arn}",
+      "${aws_cloudwatch_log_group.this.arn}:*"
+    ]
+  }
+}
+
+data "aws_iam_policy_document" "lambda_sqs" {
+  statement {
+    sid    = "SQSPermissions"
+    effect = "Allow"
+    actions = [
+      "sqs:ReceiveMessage",
+      "sqs:DeleteMessage",
+      "sqs:GetQueueAttributes",
+      "sqs:ChangeMessageVisibility"
+    ]
+    resources = [aws_sqs_queue.this.arn]
+  }
+}
