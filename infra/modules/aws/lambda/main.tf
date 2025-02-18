@@ -52,10 +52,10 @@ resource "aws_cloudwatch_log_group" "this" {
 
 resource "aws_iam_policy" "cloudwatch" {
   name   = "${var.lambda_name}-cloudwatch-policy"
-  policy = data.aws_iam_policy_document.lambda_s3_read.json
+  policy = data.aws_iam_policy_document.logs_policy.json
 }
 
 resource "aws_iam_role_policy_attachment" "cloudwatch" {
-  policy_arn = aws_iam_policy.lambda_s3.arn
+  policy_arn = aws_iam_policy.cloudwatch.arn
   role       = aws_iam_role.this.name
 }
