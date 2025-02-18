@@ -6,7 +6,6 @@ on:
   push:
     branches:
       - main
-      - sqs-consume
     paths-ignore:
       - "pyproject.toml"
       - ".github/workflows/deploy_prod.yml"
