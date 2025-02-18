@@ -50,3 +50,17 @@ data "aws_iam_policy_document" "logs_policy" {
     ]
   }
 }
+
+data "aws_iam_policy_document" "lambda_sqs" {
+  statement {
+    sid    = "SQSPermissions"
+    effect = "Allow"
+    actions = [
+      "sqs:ReceiveMessage",
+      "sqs:DeleteMessage",
+      "sqs:GetQueueAttributes",
+      "sqs:ChangeMessageVisibility"
+    ]
+    resources = [aws_sqs_queue.this.arn]
+  }
+}

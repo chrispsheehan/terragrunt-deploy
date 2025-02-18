@@ -37,7 +37,7 @@ resource "aws_lambda_event_source_mapping" "this" {
 
 resource "aws_iam_policy" "sqs" {
   name   = "${var.lambda_name}-lambda-sqs-policy"
-  policy = data.aws_iam_policy_document.lambda_s3_read.json
+  policy = data.aws_iam_policy_document.lambda_sqs.json
 }
 
 resource "aws_iam_role_policy_attachment" "sqs_policy" {
