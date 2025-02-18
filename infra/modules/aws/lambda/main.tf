@@ -35,6 +35,16 @@ resource "aws_lambda_event_source_mapping" "this" {
   batch_size       = 10
 }
 
+resource "aws_iam_policy" "sqs" {
+  name   = "${var.lambda_name}-lambda-sqs-policy"
+  policy = data.aws_iam_policy_document.lambda_s3_read.json
+}
+
+resource "aws_iam_role_policy_attachment" "sqs_policy" {
+  policy_arn = aws_iam_policy.sqs.arn
+  role       = aws_iam_role.this.name
+}
+
 resource "aws_cloudwatch_log_group" "this" {
   name              = "/aws/lambda/${aws_lambda_function.this.function_name}"
   retention_in_days = 1
