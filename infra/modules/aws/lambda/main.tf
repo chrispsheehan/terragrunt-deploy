@@ -3,13 +3,13 @@ resource "aws_iam_role" "this" {
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
 }
 
-resource "aws_iam_policy" "lambda_s3_read" {
-  name   = "${var.lambda_name}-lambda-s3-read-policy"
+resource "aws_iam_policy" "lambda_s3" {
+  name   = "${var.lambda_name}-lambda-s3-policy"
   policy = data.aws_iam_policy_document.lambda_s3_read.json
 }
 
-resource "aws_iam_role_policy_attachment" "lambda_s3_read" {
-  policy_arn = aws_iam_policy.lambda_s3_read.arn
+resource "aws_iam_role_policy_attachment" "lambda_s3" {
+  policy_arn = aws_iam_policy.lambda_s3.arn
   role       = aws_iam_role.this.name
 }
 
@@ -46,6 +46,6 @@ resource "aws_iam_policy" "cloudwatch" {
 }
 
 resource "aws_iam_role_policy_attachment" "cloudwatch" {
-  policy_arn = aws_iam_policy.lambda_s3_read.arn
+  policy_arn = aws_iam_policy.lambda_s3.arn
   role       = aws_iam_role.this.name
 }
