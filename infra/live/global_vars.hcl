@@ -4,7 +4,9 @@ locals {
   allowed_role_actions = [
     "s3:*",
     "iam:*",
-    "lambda:*"
+    "lambda:*",
+    "sqs:*",
+    "logs:*"
   ]
   allowed_role_resources = ["*"]
 }
