@@ -1,6 +1,7 @@
 locals {
   git_remote     = run_cmd("--terragrunt-quiet", "git", "remote", "get-url", "origin")
   github_repo    = regex("[/:]([-0-9_A-Za-z]*/[-0-9_A-Za-z]*)[^/]*$", local.git_remote)[0]
+  repo_owner  = split("/", local.github_repo)[0]
   aws_account_id = get_aws_account_id()
 
   path_parts  = split("/", get_terragrunt_dir())
@@ -67,6 +68,7 @@ generate "github_provider" {
   contents  = <<EOF
 provider "github" {
   token = var.git_token
+  owner = "${local.repo_owner}"
 }
 EOF
   disable   = local.provider != "github"
