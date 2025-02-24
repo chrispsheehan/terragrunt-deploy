@@ -50,6 +50,16 @@ generate "versions" {
   contents  = ""
 }
 
+generate "backend" {
+  path = "backend.tf"
+  if_exists = "skip"
+  contents   = <<EOF
+terraform {
+  backend "s3" {}
+}
+EOF
+}
+
 generate "aws_provider" {
   path      = "provider_aws.tf"
   if_exists = "overwrite_terragrunt"

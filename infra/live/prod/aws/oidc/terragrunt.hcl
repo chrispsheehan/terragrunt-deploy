@@ -3,5 +3,5 @@ include {
 }
 
 terraform {
-  source = "../../../../modules/aws/oidc"
+  source = "tfr:///chrispsheehan/github-oidc-role/aws?version=0.0.4"
 }
