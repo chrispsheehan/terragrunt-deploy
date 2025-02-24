@@ -4,7 +4,6 @@ Repo configuration and modular deployments of aws resources leveraging Github ac
 
 - use multiple providers (aws/github) while sharing env vars
 - low-friction method to initially setting up workflows/ci
-- caching terraform init files via github cache in ci
 
 ## setup local env
 

@@ -4,10 +4,6 @@ on:
       environment:
         required: true
         type: string
-      use_cache:
-        required: false
-        type: boolean
-        default: false
       version:
         description: "Version of code to be built"
         type: string
@@ -30,7 +26,6 @@ jobs:
           aws_region: ${{ vars.AWS_REGION }}
           tg_directory: infra/live/${{inputs.environment}}/aws/oidc
           tg_action: apply
-          use_cache: ${{ inputs.use_cache }}
 
   lambda:
     needs: oidc
@@ -48,4 +43,3 @@ jobs:
           aws_region: ${{ vars.AWS_REGION }}
           tg_directory: infra/live/${{inputs.environment}}/aws/lambda
           tg_action: apply
-          use_cache: ${{ inputs.use_cache }}

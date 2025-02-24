@@ -24,12 +24,6 @@ format:
     terragrunt hclfmt
 
 
-get-cache-key os tg_directory:
-    #!/usr/bin/env bash
-    LOCK_HASH=$(sha256sum "{{ tg_directory }}/.terraform.lock.hcl" | awk '{ print $1 }')
-    echo "terragrunt-{{ os }}-{{ tg_directory }}-${LOCK_HASH}"
-
-
 validate:
     #!/usr/bin/env bash
     for dir in terraform_modules/*; do

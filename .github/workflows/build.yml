@@ -32,7 +32,6 @@ jobs:
           aws_region: ${{ vars.AWS_REGION }}
           tg_directory: infra/live/${{inputs.environment}}/aws/bucket
           tg_action: apply
-          use_cache: ${{ inputs.use_cache }}
       - name: Get Bucket
         id: get_bucket
         env:
