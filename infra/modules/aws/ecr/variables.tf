@@ -18,14 +18,8 @@ variable "scan_on_push" {
   default = true
 }
 
-variable "min_image_count" {
-  description = "Minimum image count to remain in ECR"
+variable "image_expiration_days" {
+  description = "Number of days before images are deleted (set to 0 to disable)"
   type        = number
-  default     = 1
-}
-
-variable "max_day_count" {
-  description = "Maximum days to keep image in ECR"
-  type        = number
-  default     = 1
+  default     = 0
 }
