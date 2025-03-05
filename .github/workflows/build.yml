@@ -73,7 +73,7 @@ jobs:
         env:
           TG_OUTPUTS: ${{ steps.terragrunt_action.outputs.tg_outputs  }}
         run: |
-          echo "ecr_repo_name=$(echo $TG_OUTPUTS | jq -r '.ecr_repo_name')" >> $GITHUB_OUTPUT
+          echo "ecr_repo_name=$(echo $TG_OUTPUTS | jq -r '.ecr_repo_name.value')" >> $GITHUB_OUTPUT
 
   image:
     needs: ecr
