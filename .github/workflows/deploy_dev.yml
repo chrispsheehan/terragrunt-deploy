@@ -25,7 +25,7 @@ jobs:
       - id: set_sha
         run: echo "sha_short=$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_OUTPUT
 
-  zip:
+  build:
     needs: setup
     uses: ./.github/workflows/build.yml
     with:
