@@ -81,4 +81,4 @@ jobs:
       name: ${{inputs.environment}}
     runs-on: ubuntu-latest
     steps:
-      - run: echo "ecr ${{ needs.ecr.outputs.ecr_repo_name }}""
+      - run: echo "ecr ${{ needs.ecr.outputs.ecr_repo_name }}"
