@@ -6,7 +6,8 @@ locals {
     "iam:*",
     "lambda:*",
     "sqs:*",
-    "logs:*"
+    "logs:*",
+    "ecr:*"
   ]
   allowed_role_resources = ["*"]
 }

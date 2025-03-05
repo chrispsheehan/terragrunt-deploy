@@ -52,3 +52,33 @@ jobs:
           aws_region: ${{ vars.AWS_REGION }}
           s3_bucket: ${{ needs.bucket.outputs.bucket_name}}
           version: ${{ inputs.version }}
+
+  ecr:
+    environment:
+      name: ${{inputs.environment}}
+    runs-on: ubuntu-latest
+    outputs:
+      ecr_repo_name: ${{ steps.get_bucket.outputs.bucket_name }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: terragrunt_action
+        uses: ./.github/actions/terragrunt_action
+        with:
+          aws_oidc_role_arn: ${{ vars.AWS_OIDC_ROLE_ARN }}
+          aws_region: ${{ vars.AWS_REGION }}
+          tg_directory: infra/live/${{inputs.environment}}/aws/ecr
+          tg_action: apply
+      - name: Get ECR
+        id: get_bucket
+        env:
+          TG_OUTPUTS: ${{ steps.terragrunt_action.outputs.tg_outputs  }}
+        run: |
+          echo "ecr_repo_name=$(echo $TG_OUTPUTS | jq -r '.ecr_repo_name')" >> $GITHUB_OUTPUT
+
+  image:
+    needs: ecr
+    environment:
+      name: ${{inputs.environment}}
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "ecr ${{ needs.ecr.outputs.ecr_repo_name }}""
