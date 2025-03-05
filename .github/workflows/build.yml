@@ -39,14 +39,14 @@ jobs:
         run: |
           echo "bucket_name=$(echo $TG_OUTPUTS | jq -r '.bucket_name.value')" >> $GITHUB_OUTPUT
 
-  build:
+  build-zip:
     needs: bucket
     environment:
       name: ${{inputs.environment}}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/build_lambda
+      - uses: ./.github/actions/build_lambda_zip
         with:
           aws_oidc_role_arn: ${{ vars.AWS_OIDC_ROLE_ARN }}
           aws_region: ${{ vars.AWS_REGION }}
