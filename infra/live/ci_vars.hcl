@@ -6,9 +6,11 @@ locals {
   allowed_read_aws_account_ids = [
     local.aws_account_id
   ]
+  base_ecr_name = "ci"
 }
 
 inputs = {
   # aws_account_id = local.aws_account_id
   allowed_read_aws_account_ids = local.allowed_read_aws_account_ids
+  base_ecr_name                = local.base_ecr_name
 }

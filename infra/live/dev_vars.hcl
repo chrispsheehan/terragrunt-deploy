@@ -11,10 +11,12 @@ locals {
   )
   s3_expiration_days           = 1
   allowed_read_aws_account_ids = [local.aws_account_id]
+  base_ecr_name                = "dev"
 }
 
 inputs = {
   environment_branches         = local.environment_branches
   s3_expiration_days           = local.s3_expiration_days
   allowed_read_aws_account_ids = local.allowed_read_aws_account_ids
+  base_ecr_name                = local.base_ecr_name
 }

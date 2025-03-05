@@ -1,11 +1,11 @@
 variable "base_ecr_name" {
-  default = "Forms first part of repo URI/name"
-  type    = string
+  description = "Forms first part of repo URI/name"
+  type        = string
 }
 
 variable "project_name" {
-  default = "Forms second part of repo URI/name"
-  type    = string
+  description = "Forms second part of repo URI/name"
+  type        = string
 }
 
 variable "allowed_read_aws_account_ids" {
