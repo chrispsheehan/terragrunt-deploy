@@ -3,6 +3,7 @@ description: Deploy the Dev resources using the dev github environment
 
 on:
   workflow_dispatch:
+  # Enable this for auto-ci
   push:
     branches:
       - main
