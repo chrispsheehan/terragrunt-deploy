@@ -35,7 +35,7 @@ jobs:
   dev:
     needs: 
       - setup
-      - zip
+      - build
     uses: ./.github/workflows/deploy.yml
     with:
       environment: dev
