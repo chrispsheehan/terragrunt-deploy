@@ -58,7 +58,7 @@ jobs:
       name: ${{inputs.environment}}
     runs-on: ubuntu-latest
     outputs:
-      ecr_repo_name: ${{ steps.get_bucket.outputs.bucket_name }}
+      ecr_repo_name: ${{ steps.get_ecr.outputs.ecr_repo_name }}
     steps:
       - uses: actions/checkout@v4
       - id: terragrunt_action
@@ -69,7 +69,7 @@ jobs:
           tg_directory: infra/live/${{inputs.environment}}/aws/ecr
           tg_action: apply
       - name: Get ECR
-        id: get_bucket
+        id: get_ecr
         env:
           TG_OUTPUTS: ${{ steps.terragrunt_action.outputs.tg_outputs  }}
         run: |
