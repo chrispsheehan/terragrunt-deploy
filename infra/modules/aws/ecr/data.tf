@@ -32,7 +32,7 @@ data "aws_ecr_lifecycle_policy_document" "this" {
     description = "Keep only the latest ${var.min_image_count} images"
 
     selection {
-      tag_status   = "any"
+      tag_status   = "tagged"
       count_type   = "imageCountMoreThan"
       count_number = var.min_image_count
     }
